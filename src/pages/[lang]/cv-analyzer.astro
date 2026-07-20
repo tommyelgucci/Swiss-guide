@@ -1,0 +1,210 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const t = {
+  es: {
+    pageTitle: 'Analizador de CV (ATS)',
+    heading: 'Analizador de CV para el mercado suizo',
+    intro:
+      'Sube tu CV (PDF o DOCX, con texto seleccionable, no un escaneo) y una IA lo evalúa contra las convenciones suizas de reclutamiento y ATS: puntuación, puntos fuertes, y qué mejorar.',
+    fileLabel: 'Archivo del CV (PDF o DOCX, máx. 5 MB)',
+    analyzeBtn: 'Analizar CV',
+    analyzing: 'Analizando…',
+    disabledNotice:
+      'El analizador de IA no está disponible en este momento (falta configuración del servidor). El resto del sitio sigue funcionando con normalidad.',
+    noFileError: 'Selecciona primero un archivo.',
+    scoreLabel: 'Puntuación',
+    summaryLabel: 'Valoración general',
+    strengthsLabel: 'Puntos fuertes',
+    issuesLabel: 'A mejorar',
+    privacyNote:
+      'El archivo se envía al servidor solo para extraer el texto y generar el análisis; no se guarda.',
+  },
+  en: {
+    pageTitle: 'CV Analyzer (ATS)',
+    heading: 'CV analyzer for the Swiss market',
+    intro:
+      'Upload your CV (PDF or DOCX, with selectable text, not a scan) and an AI evaluates it against Swiss recruiting and ATS conventions: a score, strengths, and what to improve.',
+    fileLabel: 'CV file (PDF or DOCX, max 5 MB)',
+    analyzeBtn: 'Analyze CV',
+    analyzing: 'Analyzing…',
+    disabledNotice:
+      'The AI analyzer is not available right now (server configuration missing). The rest of the site works normally.',
+    noFileError: 'Select a file first.',
+    scoreLabel: 'Score',
+    summaryLabel: 'Overall assessment',
+    strengthsLabel: 'Strengths',
+    issuesLabel: 'To improve',
+    privacyNote:
+      'The file is sent to the server only to extract text and generate the analysis; it is not stored.',
+  },
+}[lang];
+---
+
+<Layout title={t.pageTitle} lang={lang}>
+  <h1>{t.heading}</h1>
+  <p>{t.intro}</p>
+
+  <div id="disabled-notice" class="notice" hidden>{t.disabledNotice}</div>
+
+  <form id="analyzer-form">
+    <label>
+      {t.fileLabel}
+      <input type="file" id="cv-file" accept=".pdf,.docx" />
+    </label>
+    <button type="submit" id="analyze-btn">{t.analyzeBtn}</button>
+    <p id="form-error" class="error" hidden></p>
+  </form>
+
+  <p class="privacy-note">{t.privacyNote}</p>
+
+  <section id="result" hidden>
+    <h2>{t.scoreLabel}: <span id="result-score"></span>/100</h2>
+    <h3>{t.summaryLabel}</h3>
+    <p id="result-summary"></p>
+    <h3 id="strengths-heading" hidden>{t.strengthsLabel}</h3>
+    <ul id="result-strengths"></ul>
+    <h3>{t.issuesLabel}</h3>
+    <ul id="result-issues"></ul>
+  </section>
+</Layout>
+
+<script define:vars={{ t, lang }}>
+  const form = document.getElementById('analyzer-form');
+  const fileInput = document.getElementById('cv-file');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const formError = document.getElementById('form-error');
+  const disabledNotice = document.getElementById('disabled-notice');
+  const resultSection = document.getElementById('result');
+
+  function showError(msg) {
+    formError.textContent = msg;
+    formError.hidden = false;
+  }
+  function clearError() {
+    formError.hidden = true;
+    formError.textContent = '';
+  }
+
+  fetch('/api/cv-analyzer/status')
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data.enabled) {
+        disabledNotice.hidden = false;
+        analyzeBtn.disabled = true;
+      }
+    })
+    .catch(() => {
+      disabledNotice.hidden = false;
+      analyzeBtn.disabled = true;
+    });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    clearError();
+    resultSection.hidden = true;
+
+    const file = fileInput.files?.[0];
+    if (!file) {
+      showError(t.noFileError);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('cv', file);
+    formData.append('lang', lang);
+
+    analyzeBtn.disabled = true;
+    const originalLabel = analyzeBtn.textContent;
+    analyzeBtn.textContent = t.analyzing;
+
+    try {
+      const res = await fetch('/api/cv-analyzer/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.error || `Error ${res.status}`);
+        return;
+      }
+      renderResult(data);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : String(err));
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = originalLabel;
+    }
+  });
+
+  function renderResult(data) {
+    document.getElementById('result-score').textContent = data.score;
+    document.getElementById('result-summary').textContent = data.summary;
+
+    const strengthsList = document.getElementById('result-strengths');
+    const strengthsHeading = document.getElementById('strengths-heading');
+    strengthsList.innerHTML = '';
+    if (data.strengths?.length) {
+      strengthsHeading.hidden = false;
+      data.strengths.forEach((s) => {
+        const li = document.createElement('li');
+        li.textContent = s;
+        strengthsList.appendChild(li);
+      });
+    } else {
+      strengthsHeading.hidden = true;
+    }
+
+    const issuesList = document.getElementById('result-issues');
+    issuesList.innerHTML = '';
+    (data.issues || []).forEach((issue) => {
+      const li = document.createElement('li');
+      const strong = document.createElement('strong');
+      strong.textContent = `${issue.category}: `;
+      li.appendChild(strong);
+      li.appendChild(document.createTextNode(issue.detail));
+      const suggestion = document.createElement('p');
+      suggestion.className = 'suggestion';
+      suggestion.textContent = issue.suggestion;
+      li.appendChild(suggestion);
+      issuesList.appendChild(li);
+    });
+
+    resultSection.hidden = false;
+  }
+</script>
+
+<style>
+  .notice {
+    border: 1px solid;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 480px;
+  }
+  .privacy-note {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+  .error {
+    color: firebrick;
+  }
+  #result-issues li,
+  #result-strengths li {
+    margin-bottom: 0.75rem;
+  }
+  .suggestion {
+    margin: 0.2rem 0 0;
+    font-style: italic;
+  }
+</style>

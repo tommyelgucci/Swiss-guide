@@ -8,7 +8,7 @@ const guiasUniversales = defineCollection({
   schema: z.object({
     titulo: z.string(),
     resumen: z.string(),
-    tema: z.enum(['tramites', 'trabajo', 'vivienda', 'impuestos', 'salud', 'vivir']),
+    tema: z.enum(['tramites', 'trabajo', 'vivienda', 'impuestos', 'salud', 'vivir', 'educacion']),
     minutosLectura: z.number(),
     fechaActualizacion: z.date(),
     fuentesOficiales: z.array(z.string().url()).optional(),

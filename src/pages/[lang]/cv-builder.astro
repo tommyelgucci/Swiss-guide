@@ -1,0 +1,839 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  // Solo ES/EN por ahora: el resto de idiomas todavía no tienen contenido
+  // en el sitio, y esta herramienta tiene mucho texto de interfaz que
+  // traducir (no es una guía en markdown).
+  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const t = {
+  es: {
+    pageTitle: 'Creador de CV suizo',
+    heading: 'Creador de CV en formato suizo',
+    intro:
+      'Rellena el formulario y el CV se genera en vivo a la derecha. Cuando esté listo, pulsa "Descargar PDF" — se abre el diálogo de impresión del navegador, elige "Guardar como PDF" como destino.',
+    downloadPdf: 'Descargar PDF',
+    resetAll: 'Vaciar formulario',
+    resetConfirm: '¿Seguro que quieres borrar todos los datos del formulario?',
+    photo: 'Foto (opcional)',
+    photoRemove: 'Quitar foto',
+    personalData: 'Datos personales',
+    fullName: 'Nombre completo',
+    address: 'Dirección',
+    postalCityLabel: 'Código postal y ciudad',
+    phone: 'Teléfono',
+    email: 'Email',
+    nationality: 'Nacionalidad',
+    permit: 'Permiso de residencia',
+    permitOptions: [
+      '',
+      'Ciudadano/a UE/EFTA',
+      'Permiso B',
+      'Permiso C',
+      'Permiso L',
+      'Permiso G (fronterizo)',
+      'Otro',
+    ],
+    birthDate: 'Fecha de nacimiento (opcional)',
+    civilStatus: 'Estado civil (opcional)',
+    profile: 'Perfil profesional',
+    profilePlaceholder:
+      'Resumen breve (3-4 líneas) de tu perfil, experiencia clave y objetivo profesional.',
+    experience: 'Experiencia laboral',
+    addExperience: '+ Añadir experiencia',
+    jobTitle: 'Puesto',
+    company: 'Empresa',
+    city: 'Ciudad',
+    startDate: 'Fecha inicio',
+    endDate: 'Fecha fin (o "Actualidad")',
+    description: 'Descripción de funciones y logros',
+    removeEntry: 'Eliminar',
+    education: 'Formación',
+    addEducation: '+ Añadir formación',
+    degree: 'Título / diploma',
+    institution: 'Institución',
+    languages: 'Idiomas',
+    addLanguage: '+ Añadir idioma',
+    language: 'Idioma',
+    level: 'Nivel',
+    levelOptions: ['', 'Nativo', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'],
+    skills: 'Competencias técnicas',
+    skillsPlaceholder: 'Separadas por comas: Excel, SAP, Python, alemán técnico...',
+    referencesLabel: 'Referencias',
+    referencesAvailable: 'Referencias disponibles a petición',
+    signaturePlace: 'Lugar',
+    signatureDate: 'Fecha',
+    previewHeading: 'Vista previa',
+    tipTitle: 'Convenciones del CV suizo',
+    tip1: 'Foto de tipo carnet es habitual (a diferencia de EE.UU./Reino Unido).',
+    tip2: 'El orden cronológico suele ser inverso (lo más reciente primero).',
+    tip3: 'Se acostumbra cerrar con lugar, fecha y firma manuscrita (o su indicación) al final.',
+  },
+  en: {
+    pageTitle: 'Swiss CV Builder',
+    heading: 'Swiss-format CV builder',
+    intro:
+      'Fill in the form and your CV is generated live on the right. When it\'s ready, click "Download PDF" — your browser\'s print dialog opens, choose "Save as PDF" as the destination.',
+    downloadPdf: 'Download PDF',
+    resetAll: 'Clear form',
+    resetConfirm: 'Are you sure you want to clear all form data?',
+    photo: 'Photo (optional)',
+    photoRemove: 'Remove photo',
+    personalData: 'Personal details',
+    fullName: 'Full name',
+    address: 'Address',
+    postalCityLabel: 'Postal code and city',
+    phone: 'Phone',
+    email: 'Email',
+    nationality: 'Nationality',
+    permit: 'Residence permit',
+    permitOptions: [
+      '',
+      'EU/EFTA citizen',
+      'Permit B',
+      'Permit C',
+      'Permit L',
+      'Permit G (cross-border)',
+      'Other',
+    ],
+    birthDate: 'Date of birth (optional)',
+    civilStatus: 'Marital status (optional)',
+    profile: 'Professional profile',
+    profilePlaceholder:
+      'Short summary (3-4 lines) of your profile, key experience, and career goal.',
+    experience: 'Work experience',
+    addExperience: '+ Add experience',
+    jobTitle: 'Job title',
+    company: 'Company',
+    city: 'City',
+    startDate: 'Start date',
+    endDate: 'End date (or "Present")',
+    description: 'Description of duties and achievements',
+    removeEntry: 'Remove',
+    education: 'Education',
+    addEducation: '+ Add education',
+    degree: 'Degree / diploma',
+    institution: 'Institution',
+    languages: 'Languages',
+    addLanguage: '+ Add language',
+    language: 'Language',
+    level: 'Level',
+    levelOptions: ['', 'Native', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'],
+    skills: 'Technical skills',
+    skillsPlaceholder: 'Comma-separated: Excel, SAP, Python, technical German...',
+    referencesLabel: 'References',
+    referencesAvailable: 'References available upon request',
+    signaturePlace: 'Place',
+    signatureDate: 'Date',
+    previewHeading: 'Preview',
+    tipTitle: 'Swiss CV conventions',
+    tip1: 'A passport-style photo is common (unlike in the US/UK).',
+    tip2: 'Reverse chronological order is standard (most recent first).',
+    tip3: 'It\'s customary to close with place, date, and a handwritten signature (or its mention) at the end.',
+  },
+}[lang];
+---
+
+<Layout title={t.pageTitle} lang={lang}>
+  <h1>{t.heading}</h1>
+  <p>{t.intro}</p>
+
+  <div class="cv-tool">
+    <form id="cv-form" class="cv-form">
+      <div class="toolbar">
+        <button type="button" id="download-pdf">{t.downloadPdf}</button>
+        <button type="button" id="reset-form" class="secondary">{t.resetAll}</button>
+      </div>
+
+      <fieldset>
+        <legend>{t.photo}</legend>
+        <input type="file" id="photo-input" accept="image/*" />
+        <button type="button" id="remove-photo" class="secondary">{t.photoRemove}</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.personalData}</legend>
+        <label>{t.fullName}<input type="text" id="fullName" /></label>
+        <label>{t.address}<input type="text" id="address" /></label>
+        <label>{t.postalCityLabel}<input type="text" id="postalCity" /></label>
+        <label>{t.phone}<input type="text" id="phone" /></label>
+        <label>{t.email}<input type="email" id="email" /></label>
+        <label>{t.nationality}<input type="text" id="nationality" /></label>
+        <label>
+          {t.permit}
+          <select id="permit">
+            {t.permitOptions.map((opt) => <option value={opt}>{opt}</option>)}
+          </select>
+        </label>
+        <label>{t.birthDate}<input type="text" id="birthDate" /></label>
+        <label>{t.civilStatus}<input type="text" id="civilStatus" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.profile}</legend>
+        <textarea id="profile" rows="4" placeholder={t.profilePlaceholder}></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.experience}</legend>
+        <div id="experience-list"></div>
+        <button type="button" id="add-experience" class="secondary">{t.addExperience}</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.education}</legend>
+        <div id="education-list"></div>
+        <button type="button" id="add-education" class="secondary">{t.addEducation}</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.languages}</legend>
+        <div id="languages-list"></div>
+        <button type="button" id="add-language" class="secondary">{t.addLanguage}</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.skills}</legend>
+        <textarea id="skills" rows="2" placeholder={t.skillsPlaceholder}></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.referencesLabel}</legend>
+        <label class="checkbox-label">
+          <input type="checkbox" id="referencesAvailable" />
+          {t.referencesAvailable}
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.signaturePlace} / {t.signatureDate}</legend>
+        <label>{t.signaturePlace}<input type="text" id="sigPlace" /></label>
+        <label>{t.signatureDate}<input type="text" id="sigDate" /></label>
+      </fieldset>
+
+      <aside class="tip-box">
+        <strong>{t.tipTitle}</strong>
+        <ul>
+          <li>{t.tip1}</li>
+          <li>{t.tip2}</li>
+          <li>{t.tip3}</li>
+        </ul>
+      </aside>
+    </form>
+
+    <section class="cv-preview-panel">
+      <h2 class="no-print">{t.previewHeading}</h2>
+      <div id="cv-preview" class="cv-preview">
+        <header class="cv-preview-header">
+          <img id="pv-photo" class="cv-preview-photo" hidden />
+          <div class="cv-preview-name-block">
+            <h3 id="pv-fullName">&nbsp;</h3>
+            <p id="pv-address"></p>
+            <p id="pv-postalCity"></p>
+            <p id="pv-phone"></p>
+            <p id="pv-email"></p>
+          </div>
+        </header>
+
+        <dl class="cv-preview-meta">
+          <div><dt>{t.nationality}</dt><dd id="pv-nationality"></dd></div>
+          <div><dt>{t.permit}</dt><dd id="pv-permit"></dd></div>
+          <div><dt>{t.birthDate}</dt><dd id="pv-birthDate"></dd></div>
+          <div><dt>{t.civilStatus}</dt><dd id="pv-civilStatus"></dd></div>
+        </dl>
+
+        <section id="pv-profile-section" hidden>
+          <h4>{t.profile}</h4>
+          <p id="pv-profile"></p>
+        </section>
+
+        <section id="pv-experience-section" hidden>
+          <h4>{t.experience}</h4>
+          <div id="pv-experience"></div>
+        </section>
+
+        <section id="pv-education-section" hidden>
+          <h4>{t.education}</h4>
+          <div id="pv-education"></div>
+        </section>
+
+        <section id="pv-languages-section" hidden>
+          <h4>{t.languages}</h4>
+          <div id="pv-languages"></div>
+        </section>
+
+        <section id="pv-skills-section" hidden>
+          <h4>{t.skills}</h4>
+          <p id="pv-skills"></p>
+        </section>
+
+        <section id="pv-references-section" hidden>
+          <h4>{t.referencesLabel}</h4>
+          <p>{t.referencesAvailable}</p>
+        </section>
+
+        <p id="pv-signature" class="cv-preview-signature"></p>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script define:vars={{ t, lang }}>
+  const STORAGE_KEY = `swissguide_cv_builder_${lang}_v1`;
+
+  const experienceListEl = document.getElementById('experience-list');
+  const educationListEl = document.getElementById('education-list');
+  const languagesListEl = document.getElementById('languages-list');
+
+  const simpleFieldIds = [
+    'fullName', 'address', 'postalCity', 'phone', 'email', 'nationality',
+    'permit', 'birthDate', 'civilStatus', 'profile', 'skills', 'sigPlace', 'sigDate',
+  ];
+
+  function makeRow(container, fields, removeLabel) {
+    const row = document.createElement('div');
+    row.className = 'repeatable-row';
+    fields.forEach(([key, label, type]) => {
+      const wrapper = document.createElement('label');
+      wrapper.textContent = label;
+      const input = type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+      if (type !== 'textarea') input.type = type || 'text';
+      input.dataset.key = key;
+      input.className = 'row-input';
+      wrapper.appendChild(input);
+      row.appendChild(wrapper);
+    });
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'secondary remove-row';
+    removeBtn.textContent = removeLabel;
+    removeBtn.addEventListener('click', () => {
+      row.remove();
+      renderPreview();
+      saveState();
+    });
+    row.appendChild(removeBtn);
+    container.appendChild(row);
+    row.querySelectorAll('input, textarea').forEach((el) => {
+      el.addEventListener('input', () => {
+        renderPreview();
+        saveState();
+      });
+    });
+    return row;
+  }
+
+  function addExperienceRow(data = {}) {
+    const row = makeRow(
+      experienceListEl,
+      [
+        ['jobTitle', t.jobTitle],
+        ['company', t.company],
+        ['city', t.city],
+        ['startDate', t.startDate],
+        ['endDate', t.endDate],
+        ['description', t.description, 'textarea'],
+      ],
+      t.removeEntry,
+    );
+    Object.entries(data).forEach(([k, v]) => {
+      const el = row.querySelector(`[data-key="${k}"]`);
+      if (el) el.value = v;
+    });
+  }
+
+  function addEducationRow(data = {}) {
+    const row = makeRow(
+      educationListEl,
+      [
+        ['degree', t.degree],
+        ['institution', t.institution],
+        ['city', t.city],
+        ['startDate', t.startDate],
+        ['endDate', t.endDate],
+      ],
+      t.removeEntry,
+    );
+    Object.entries(data).forEach(([k, v]) => {
+      const el = row.querySelector(`[data-key="${k}"]`);
+      if (el) el.value = v;
+    });
+  }
+
+  function addLanguageRow(data = {}) {
+    const row = document.createElement('div');
+    row.className = 'repeatable-row';
+
+    const langLabel = document.createElement('label');
+    langLabel.textContent = t.language;
+    const langInput = document.createElement('input');
+    langInput.type = 'text';
+    langInput.dataset.key = 'language';
+    langInput.className = 'row-input';
+    langLabel.appendChild(langInput);
+
+    const levelLabel = document.createElement('label');
+    levelLabel.textContent = t.level;
+    const levelSelect = document.createElement('select');
+    levelSelect.dataset.key = 'level';
+    levelSelect.className = 'row-input';
+    t.levelOptions.forEach((opt) => {
+      const optionEl = document.createElement('option');
+      optionEl.value = opt;
+      optionEl.textContent = opt;
+      levelSelect.appendChild(optionEl);
+    });
+    levelLabel.appendChild(levelSelect);
+
+    row.appendChild(langLabel);
+    row.appendChild(levelLabel);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'secondary remove-row';
+    removeBtn.textContent = t.removeEntry;
+    removeBtn.addEventListener('click', () => {
+      row.remove();
+      renderPreview();
+      saveState();
+    });
+    row.appendChild(removeBtn);
+
+    languagesListEl.appendChild(row);
+    row.querySelectorAll('input, select').forEach((el) => {
+      el.addEventListener('input', () => {
+        renderPreview();
+        saveState();
+      });
+      el.addEventListener('change', () => {
+        renderPreview();
+        saveState();
+      });
+    });
+
+    if (data.language) langInput.value = data.language;
+    if (data.level) levelSelect.value = data.level;
+  }
+
+  function collectRows(container, keys) {
+    return Array.from(container.querySelectorAll('.repeatable-row')).map((row) => {
+      const entry = {};
+      keys.forEach((key) => {
+        const el = row.querySelector(`[data-key="${key}"]`);
+        entry[key] = el ? el.value : '';
+      });
+      return entry;
+    });
+  }
+
+  let photoDataUrl = null;
+
+  function renderPreview() {
+    const val = (id) => (document.getElementById(id)?.value || '').trim();
+
+    document.getElementById('pv-fullName').textContent = val('fullName') || ' ';
+    document.getElementById('pv-address').textContent = val('address');
+    document.getElementById('pv-postalCity').textContent = val('postalCity');
+    document.getElementById('pv-phone').textContent = val('phone');
+    document.getElementById('pv-email').textContent = val('email');
+    document.getElementById('pv-nationality').textContent = val('nationality');
+    document.getElementById('pv-permit').textContent = val('permit');
+    document.getElementById('pv-birthDate').textContent = val('birthDate');
+    document.getElementById('pv-civilStatus').textContent = val('civilStatus');
+
+    const profile = val('profile');
+    document.getElementById('pv-profile-section').hidden = !profile;
+    document.getElementById('pv-profile').textContent = profile;
+
+    const experience = collectRows(experienceListEl, ['jobTitle', 'company', 'city', 'startDate', 'endDate', 'description']);
+    const expSection = document.getElementById('pv-experience-section');
+    const expContainer = document.getElementById('pv-experience');
+    expContainer.innerHTML = '';
+    const hasExperience = experience.some((e) => Object.values(e).some(Boolean));
+    expSection.hidden = !hasExperience;
+    experience.forEach((e) => {
+      if (!Object.values(e).some(Boolean)) return;
+      const block = document.createElement('div');
+      block.className = 'cv-entry';
+      block.innerHTML = `
+        <p class="cv-entry-title"><strong>${escapeHtml(e.jobTitle)}</strong> — ${escapeHtml(e.company)}${e.city ? ', ' + escapeHtml(e.city) : ''}</p>
+        <p class="cv-entry-dates">${escapeHtml(e.startDate)}${e.startDate || e.endDate ? ' – ' : ''}${escapeHtml(e.endDate)}</p>
+        <p class="cv-entry-desc">${escapeHtml(e.description)}</p>
+      `;
+      expContainer.appendChild(block);
+    });
+
+    const education = collectRows(educationListEl, ['degree', 'institution', 'city', 'startDate', 'endDate']);
+    const eduSection = document.getElementById('pv-education-section');
+    const eduContainer = document.getElementById('pv-education');
+    eduContainer.innerHTML = '';
+    const hasEducation = education.some((e) => Object.values(e).some(Boolean));
+    eduSection.hidden = !hasEducation;
+    education.forEach((e) => {
+      if (!Object.values(e).some(Boolean)) return;
+      const block = document.createElement('div');
+      block.className = 'cv-entry';
+      block.innerHTML = `
+        <p class="cv-entry-title"><strong>${escapeHtml(e.degree)}</strong> — ${escapeHtml(e.institution)}${e.city ? ', ' + escapeHtml(e.city) : ''}</p>
+        <p class="cv-entry-dates">${escapeHtml(e.startDate)}${e.startDate || e.endDate ? ' – ' : ''}${escapeHtml(e.endDate)}</p>
+      `;
+      eduContainer.appendChild(block);
+    });
+
+    const languages = collectRows(languagesListEl, ['language', 'level']);
+    const langSection = document.getElementById('pv-languages-section');
+    const langContainer = document.getElementById('pv-languages');
+    langContainer.innerHTML = '';
+    const hasLanguages = languages.some((l) => l.language);
+    langSection.hidden = !hasLanguages;
+    if (hasLanguages) {
+      const list = document.createElement('ul');
+      languages.forEach((l) => {
+        if (!l.language) return;
+        const li = document.createElement('li');
+        li.textContent = l.level ? `${l.language} — ${l.level}` : l.language;
+        list.appendChild(li);
+      });
+      langContainer.appendChild(list);
+    }
+
+    const skills = val('skills');
+    document.getElementById('pv-skills-section').hidden = !skills;
+    document.getElementById('pv-skills').textContent = skills;
+
+    document.getElementById('pv-references-section').hidden = !document.getElementById('referencesAvailable').checked;
+
+    const sigPlace = val('sigPlace');
+    const sigDate = val('sigDate');
+    document.getElementById('pv-signature').textContent =
+      sigPlace || sigDate ? `${sigPlace}${sigPlace && sigDate ? ', ' : ''}${sigDate}` : '';
+
+    const photoEl = document.getElementById('pv-photo');
+    if (photoDataUrl) {
+      photoEl.src = photoDataUrl;
+      photoEl.hidden = false;
+    } else {
+      photoEl.hidden = true;
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML.replace(/\n/g, '<br>');
+  }
+
+  function saveState() {
+    const simple = {};
+    simpleFieldIds.forEach((id) => {
+      simple[id] = document.getElementById(id)?.value || '';
+    });
+    const state = {
+      simple,
+      referencesAvailable: document.getElementById('referencesAvailable').checked,
+      experience: collectRows(experienceListEl, ['jobTitle', 'company', 'city', 'startDate', 'endDate', 'description']),
+      education: collectRows(educationListEl, ['degree', 'institution', 'city', 'startDate', 'endDate']),
+      languages: collectRows(languagesListEl, ['language', 'level']),
+      photoDataUrl,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      addExperienceRow();
+      addEducationRow();
+      addLanguageRow();
+      return;
+    }
+    try {
+      const state = JSON.parse(raw);
+      simpleFieldIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && state.simple?.[id] !== undefined) el.value = state.simple[id];
+      });
+      document.getElementById('referencesAvailable').checked = !!state.referencesAvailable;
+      (state.experience?.length ? state.experience : [{}]).forEach(addExperienceRow);
+      (state.education?.length ? state.education : [{}]).forEach(addEducationRow);
+      (state.languages?.length ? state.languages : [{}]).forEach(addLanguageRow);
+      if (state.photoDataUrl) {
+        photoDataUrl = state.photoDataUrl;
+      }
+    } catch {
+      addExperienceRow();
+      addEducationRow();
+      addLanguageRow();
+    }
+  }
+
+  document.getElementById('add-experience').addEventListener('click', () => {
+    addExperienceRow();
+    renderPreview();
+    saveState();
+  });
+  document.getElementById('add-education').addEventListener('click', () => {
+    addEducationRow();
+    renderPreview();
+    saveState();
+  });
+  document.getElementById('add-language').addEventListener('click', () => {
+    addLanguageRow();
+    renderPreview();
+    saveState();
+  });
+
+  simpleFieldIds.forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', () => {
+      renderPreview();
+      saveState();
+    });
+  });
+  document.getElementById('referencesAvailable').addEventListener('change', () => {
+    renderPreview();
+    saveState();
+  });
+
+  document.getElementById('photo-input').addEventListener('change', (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      photoDataUrl = reader.result;
+      renderPreview();
+      saveState();
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('remove-photo').addEventListener('click', () => {
+    photoDataUrl = null;
+    document.getElementById('photo-input').value = '';
+    renderPreview();
+    saveState();
+  });
+
+  document.getElementById('download-pdf').addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('reset-form').addEventListener('click', () => {
+    if (!confirm(t.resetConfirm)) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.getElementById('cv-form').reset();
+    experienceListEl.innerHTML = '';
+    educationListEl.innerHTML = '';
+    languagesListEl.innerHTML = '';
+    photoDataUrl = null;
+    addExperienceRow();
+    addEducationRow();
+    addLanguageRow();
+    renderPreview();
+  });
+
+  loadState();
+  renderPreview();
+</script>
+
+<style>
+  .cv-tool {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .cv-tool {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    background: Canvas;
+    padding: 0.5rem 0;
+    z-index: 1;
+  }
+
+  button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+  }
+  button.secondary {
+    background: transparent;
+  }
+
+  fieldset {
+    margin-bottom: 1.25rem;
+  }
+  fieldset label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+  }
+  fieldset input[type='text'],
+  fieldset input[type='email'],
+  fieldset select,
+  fieldset textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.2rem;
+    box-sizing: border-box;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .checkbox-label input {
+    width: auto;
+  }
+
+  .repeatable-row {
+    border: 1px solid;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .row-input {
+    display: block;
+    width: 100%;
+    margin-top: 0.2rem;
+    box-sizing: border-box;
+  }
+  .remove-row {
+    margin-top: 0.5rem;
+  }
+
+  .tip-box {
+    display: block;
+    padding: 0.75rem 1rem;
+    border: 1px dashed;
+  }
+  .tip-box ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+  }
+
+  .cv-preview-panel {
+    position: sticky;
+    top: 1rem;
+  }
+
+  .cv-preview {
+    border: 1px solid;
+    padding: 2rem;
+    max-width: 210mm;
+    min-height: 200mm;
+    background: white;
+    color: black;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .cv-preview-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    border-bottom: 2px solid black;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+  .cv-preview-photo {
+    width: 100px;
+    height: 130px;
+    object-fit: cover;
+    border: 1px solid black;
+  }
+  .cv-preview-name-block h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.4rem;
+  }
+  .cv-preview-name-block p {
+    margin: 0.1rem 0;
+    font-size: 0.9rem;
+  }
+
+  .cv-preview-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+  .cv-preview-meta dt {
+    font-weight: bold;
+    display: inline;
+  }
+  .cv-preview-meta dt::after {
+    content: ': ';
+  }
+  .cv-preview-meta dd {
+    display: inline;
+    margin: 0;
+  }
+  .cv-preview-meta div:empty,
+  .cv-preview-meta dd:empty {
+    display: none;
+  }
+
+  .cv-preview h4 {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.2rem;
+    margin: 1.25rem 0 0.5rem;
+  }
+
+  .cv-entry {
+    margin-bottom: 0.75rem;
+  }
+  .cv-entry-title {
+    margin: 0;
+  }
+  .cv-entry-dates {
+    margin: 0;
+    font-style: italic;
+    font-size: 0.85rem;
+  }
+  .cv-entry-desc {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  .cv-preview-signature {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+  }
+
+  @media print {
+    .cv-form,
+    .toolbar,
+    header,
+    .no-print,
+    h1,
+    .cv-tool > p {
+      display: none !important;
+    }
+    .cv-tool {
+      display: block;
+    }
+    .cv-preview-panel {
+      position: static;
+    }
+    .cv-preview {
+      border: none;
+      max-width: none;
+      min-height: auto;
+      padding: 0;
+    }
+  }
+</style>
