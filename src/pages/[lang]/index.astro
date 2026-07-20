@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  const idiomas = ['es', 'de', 'en', 'fr', 'it', 'pt'];
+  return idiomas.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+// Trae solo las guías universales de este idioma
+const todasLasGuias = await getCollection('guias-universales');
+const guiasDelIdioma = todasLasGuias.filter((g) => g.slug.startsWith(`${lang}/`));
+
+const titulos: Record<string, string> = {
+  es: 'Guía para vivir y trabajar en Suiza',
+  de: 'Leitfaden für das Leben und Arbeiten in der Schweiz',
+  en: 'Guide to living and working in Switzerland',
+  fr: 'Guide pour vivre et travailler en Suisse',
+  it: 'Guida per vivere e lavorare in Svizzera',
+  pt: 'Guia para viver e trabalhar na Suíça',
+};
+---
+<Layout title={titulos[lang]} lang={lang}>
+  <h1>{titulos[lang]}</h1>
+  <ul>
+    {guiasDelIdioma.map((guia) => (
+      <li>
+        <a href={`/${lang}/guias/${guia.slug.split('/')[1]}`}>
+          {guia.data.titulo}
+        </a>
+        <p>{guia.data.resumen}</p>
+      </li>
+    ))}
+  </ul>
+</Layout>

@@ -1,0 +1,28 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const todasLasGuias = await getCollection('guias-universales');
+  return todasLasGuias.map((guia) => {
+    const [lang, slug] = guia.slug.split('/');
+    return {
+      params: { lang, slug },
+      props: { guia },
+    };
+  });
+}
+
+const { guia } = Astro.props;
+const { lang } = Astro.params;
+const { Content } = await guia.render();
+---
+<Layout title={guia.data.titulo} lang={lang}>
+  <article>
+    <p>
+      {guia.data.minutosLectura} min · actualizado el {guia.data.fechaActualizacion.toLocaleDateString(lang)}
+    </p>
+    <h1>{guia.data.titulo}</h1>
+    <Content />
+  </article>
+</Layout>
