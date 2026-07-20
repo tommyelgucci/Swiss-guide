@@ -46,6 +46,20 @@ src/
    idioma sabe a qué página saltar.
 3. Astro genera las rutas automáticamente, no hay que tocar código.
 
+## Herramientas
+
+Además de las guías, `src/pages/[lang]/cv-builder.astro` es una herramienta
+interactiva (formulario + preview en vivo + export a PDF vía impresión del
+navegador) para crear un CV en formato suizo. Solo disponible en ES/EN por
+ahora (mucho texto de interfaz que traducir). Todo el estado se guarda en
+`localStorage`, no hay backend involucrado — el PDF se genera con CSS de
+impresión (`@media print`), sin librerías extra.
+
+Próxima herramienta planeada: analizador de CV tipo ATS (sube tu CV, lo
+evalúa contra criterios suizos). Esa sí necesitará parsing de documentos y
+lógica de scoring en el backend — de ahí que `server.js` ya esté montado
+con Express en vez de un hosting puramente estático.
+
 ## Próximos pasos sugeridos
 
 - [ ] Traducir lamal.md a de/fr/it/pt (falta contenido, solo está la estructura)
@@ -56,6 +70,7 @@ src/
 - [ ] Selector "¿de qué país eres?" en el onboarding para mostrar el módulo
       por-pais correcto
 - [ ] Búsqueda (Pagefind funciona bien con sitios Astro estáticos y es gratis)
+- [ ] Analizador de CV ATS (segunda fase, tras el creador de CV)
 
 ## Servir el build en producción
 
