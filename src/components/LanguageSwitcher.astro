@@ -1,0 +1,29 @@
+---
+interface Props {
+  currentLang: string;
+}
+const { currentLang } = Astro.props;
+
+const idiomas = [
+  { code: 'es', label: 'Español' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'pt', label: 'Português' },
+];
+
+// Reemplaza el segmento de idioma en la URL actual, ej:
+// /es/guias/lamal -> /de/guias/lamal
+const pathSinIdioma = Astro.url.pathname.replace(`/${currentLang}/`, '/');
+---
+<nav aria-label="Selector de idioma">
+  {idiomas.map((idioma) => (
+    <a
+      href={`/${idioma.code}${pathSinIdioma}`}
+      aria-current={idioma.code === currentLang ? 'page' : undefined}
+    >
+      {idioma.label}
+    </a>
+  ))}
+</nav>
