@@ -55,10 +55,13 @@ ahora (mucho texto de interfaz que traducir). Todo el estado se guarda en
 `localStorage`, no hay backend involucrado — el PDF se genera con CSS de
 impresión (`@media print`), sin librerías extra.
 
-Próxima herramienta planeada: analizador de CV tipo ATS (sube tu CV, lo
-evalúa contra criterios suizos). Esa sí necesitará parsing de documentos y
-lógica de scoring en el backend — de ahí que `server.js` ya esté montado
-con Express en vez de un hosting puramente estático.
+`src/pages/[lang]/cv-analyzer.astro` + `server/routes/cv-analyzer.js` son el
+analizador de CV tipo ATS: subes un PDF/DOCX, el backend extrae el texto
+(`pdf-parse`/`mammoth`) y se lo pasa a Groq (mismo patrón que el backend de
+Aloenglish: `GET /status` para saber si la IA está configurada, `GROQ_API_KEY`
++ `GROQ_MODEL` como env vars, `response_format: json_object` + parseo con
+fallback). Devuelve puntuación, valoración general, puntos fuertes y una
+lista de mejoras concretas según convenciones suizas de reclutamiento.
 
 ## Próximos pasos sugeridos
 
@@ -70,7 +73,6 @@ con Express en vez de un hosting puramente estático.
 - [ ] Selector "¿de qué país eres?" en el onboarding para mostrar el módulo
       por-pais correcto
 - [ ] Búsqueda (Pagefind funciona bien con sitios Astro estáticos y es gratis)
-- [ ] Analizador de CV ATS (segunda fase, tras el creador de CV)
 
 ## Servir el build en producción
 
@@ -92,8 +94,10 @@ npm run serve   # sirve dist/ con Express en $PORT (default 4321)
 2. **Root Directory**: raíz del repo (no es un monorepo, a diferencia de
    Aloenglish/BrainBit) — `Dockerfile Path` y `Build Context` se quedan en
    su valor por default (`Dockerfile` y `.`).
-3. `PORT` se auto-detecta del `.env.example` en la raíz y ya queda
-   pre-llenada con un valor válido. Si en el futuro se añade una API con
-   claves (IA, base de datos, etc.), esas variables se agregan **a mano**
-   con "+ Add Custom Variable" en el dashboard — nunca en el `.env.example`
-   ni commiteadas con valor real.
+3. `PORT` y `GROQ_MODEL` se auto-detectan del `.env.example` en la raíz.
+   `GROQ_API_KEY` se agrega **a mano** con "+ Add Custom Variable" en el
+   dashboard (no está en el `.env.example` a propósito, para que no quede
+   en un campo de auto-detección en texto plano). Clave en
+   https://console.groq.com/keys. Sin esta variable, el analizador de CV
+   sigue online pero deshabilitado con un aviso — el resto del sitio
+   funciona igual.
