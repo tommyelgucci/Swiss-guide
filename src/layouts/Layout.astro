@@ -1,11 +1,22 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
   lang: string;
 }
 const { title, lang } = Astro.props;
+
+const toolsLang = lang === 'en' ? 'en' : 'es';
+const footerText: Record<string, string> = {
+  es: 'SwissGuide — guías para extranjeros en Suiza.',
+  de: 'SwissGuide — Leitfäden für Ausländer in der Schweiz.',
+  en: 'SwissGuide — guides for foreigners in Switzerland.',
+  fr: 'SwissGuide — guides pour les étrangers en Suisse.',
+  it: 'SwissGuide — guide per stranieri in Svizzera.',
+  pt: 'SwissGuide — guias para estrangeiros na Suíça.',
+};
 ---
 <!doctype html>
 <html lang={lang}>
@@ -15,19 +26,27 @@ const { title, lang } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <header>
-      <LanguageSwitcher currentLang={lang} />
-      <nav aria-label="Herramientas">
-        <a href={`/${lang === 'en' ? 'en' : 'es'}/cv-builder`}>
-          {lang === 'en' ? 'Swiss CV builder' : 'Creador de CV suizo'}
-        </a>
-        <a href={`/${lang === 'en' ? 'en' : 'es'}/cv-analyzer`}>
-          {lang === 'en' ? 'CV analyzer (ATS)' : 'Analizador de CV (ATS)'}
-        </a>
-      </nav>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="site-brand" href={`/${lang}/`}>SwissGuide</a>
+        <nav class="tools-nav" aria-label="Herramientas">
+          <a href={`/${toolsLang}/cv-builder`}>
+            {lang === 'en' ? 'CV builder' : 'Creador de CV'}
+          </a>
+          <a href={`/${toolsLang}/cv-analyzer`}>
+            {lang === 'en' ? 'CV analyzer' : 'Analizador de CV'}
+          </a>
+        </nav>
+        <LanguageSwitcher currentLang={lang} />
+      </div>
     </header>
-    <main>
+    <main class="container-wide">
       <slot />
     </main>
+    <footer class="site-footer">
+      <div class="container-wide">
+        <p>{footerText[lang] || footerText.es}</p>
+      </div>
+    </footer>
   </body>
 </html>

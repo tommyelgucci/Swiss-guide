@@ -21,17 +21,68 @@ const titulos: Record<string, string> = {
   it: 'Guida per vivere e lavorare in Svizzera',
   pt: 'Guia para viver e trabalhar na Suíça',
 };
+
+const intros: Record<string, string> = {
+  es: 'Guías prácticas escritas para cualquier persona extranjera que llega a Suiza, sin importar tu nacionalidad.',
+  de: 'Praktische Leitfäden für alle Ausländer, die in die Schweiz kommen, unabhängig von ihrer Nationalität.',
+  en: 'Practical guides written for any foreigner arriving in Switzerland, regardless of nationality.',
+  fr: 'Guides pratiques rédigés pour toute personne étrangère arrivant en Suisse, quelle que soit sa nationalité.',
+  it: 'Guide pratiche scritte per qualsiasi straniero che arriva in Svizzera, indipendentemente dalla nazionalità.',
+  pt: 'Guias práticos escritos para qualquer estrangeiro que chega à Suíça, independentemente da nacionalidade.',
+};
+
+const topicOrder = ['tramites', 'trabajo', 'vivienda', 'impuestos', 'salud', 'educacion', 'vivir'];
+
+const topicLabels: Record<string, Record<string, string>> = {
+  tramites: { es: 'Trámites', de: 'Formalitäten', en: 'Paperwork', fr: 'Démarches', it: 'Pratiche', pt: 'Trâmites' },
+  trabajo: { es: 'Trabajo', de: 'Arbeit', en: 'Work', fr: 'Travail', it: 'Lavoro', pt: 'Trabalho' },
+  vivienda: { es: 'Vivienda', de: 'Wohnen', en: 'Housing', fr: 'Logement', it: 'Alloggio', pt: 'Moradia' },
+  impuestos: { es: 'Impuestos', de: 'Steuern', en: 'Taxes', fr: 'Impôts', it: 'Tasse', pt: 'Impostos' },
+  salud: { es: 'Salud', de: 'Gesundheit', en: 'Health', fr: 'Santé', it: 'Salute', pt: 'Saúde' },
+  educacion: { es: 'Educación', de: 'Bildung', en: 'Education', fr: 'Éducation', it: 'Istruzione', pt: 'Educação' },
+  vivir: { es: 'Vida diaria', de: 'Alltag', en: 'Daily life', fr: 'Vie quotidienne', it: 'Vita quotidiana', pt: 'Vida diária' },
+};
+
+const grupos = topicOrder
+  .map((tema) => ({
+    tema,
+    label: topicLabels[tema][lang] || topicLabels[tema].es,
+    guias: guiasDelIdioma.filter((g) => g.data.tema === tema),
+  }))
+  .filter((grupo) => grupo.guias.length > 0);
 ---
 <Layout title={titulos[lang]} lang={lang}>
   <h1>{titulos[lang]}</h1>
-  <ul>
-    {guiasDelIdioma.map((guia) => (
-      <li>
-        <a href={`/${lang}/guias/${guia.slug.split('/')[1]}`}>
-          {guia.data.titulo}
-        </a>
-        <p>{guia.data.resumen}</p>
-      </li>
-    ))}
-  </ul>
+  <p>{intros[lang] || intros.es}</p>
+
+  {grupos.map((grupo) => (
+    <section>
+      <h2>{grupo.label}</h2>
+      <div class="guide-grid">
+        {grupo.guias.map((guia) => (
+          <a class="card card-link" href={`/${lang}/guias/${guia.slug.split('/')[1]}`}>
+            <h3>{guia.data.titulo}</h3>
+            <p>{guia.data.resumen}</p>
+            <span class="meta-row">{guia.data.minutosLectura} min</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
 </Layout>
+
+<style>
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .guide-grid p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+  .guide-grid .meta-row {
+    margin: 0;
+  }
+</style>
