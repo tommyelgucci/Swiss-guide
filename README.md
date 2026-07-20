@@ -55,13 +55,30 @@ src/
       lista plana
 - [ ] Selector "¿de qué país eres?" en el onboarding para mostrar el módulo
       por-pais correcto
-- [ ] Subir a GitHub y conectar con Vercel/Netlify para despliegue automático
 - [ ] Búsqueda (Pagefind funciona bien con sitios Astro estáticos y es gratis)
 
-## Despliegue
+## Servir el build en producción
 
-Cuando esté en GitHub:
-1. Ve a vercel.com (o netlify.com) → "Import Project" → conecta tu repo.
-2. Detecta Astro automáticamente, no necesitas configurar nada.
-3. Cada push a `main` despliega solo — mismo flujo que ya usas con CogniLab,
-   pero sin lidiar con tokens de Hugging Face.
+Astro genera el sitio como HTML estático en `dist/`. `server.js` es un
+servidor Express mínimo que sirve ese `dist/` — se usa en vez de un hosting
+puramente estático porque el sitio puede dejar de ser 100% estático más
+adelante (búsqueda con backend, formularios, auth, etc.): las rutas nuevas
+se añaden en `server.js` antes del `express.static`, sin cambiar de
+plataforma de deploy.
+
+```bash
+npm run build   # genera dist/
+npm run serve   # sirve dist/ con Express en $PORT (default 4321)
+```
+
+## Deploy en SnapDeploy
+
+1. Conectar el repo/rama en el dashboard de SnapDeploy.
+2. **Root Directory**: raíz del repo (no es un monorepo, a diferencia de
+   Aloenglish/BrainBit) — `Dockerfile Path` y `Build Context` se quedan en
+   su valor por default (`Dockerfile` y `.`).
+3. `PORT` se auto-detecta del `.env.example` en la raíz y ya queda
+   pre-llenada con un valor válido. Si en el futuro se añade una API con
+   claves (IA, base de datos, etc.), esas variables se agregan **a mano**
+   con "+ Add Custom Variable" en el dashboard — nunca en el `.env.example`
+   ni commiteadas con valor real.
