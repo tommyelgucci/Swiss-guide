@@ -44,7 +44,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-bg: #121214;
     --color-surface: #1c1c1f;
     --color-text: #f0f0f0;
@@ -59,6 +59,29 @@
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
   }
+}
+
+/* Anula el sistema operativo cuando la persona elige manualmente con el
+   botón del header (persistido en localStorage, ver Layout.astro). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #121214;
+  --color-surface: #1c1c1f;
+  --color-text: #f0f0f0;
+  --color-text-secondary: #a8a8ad;
+  --color-border: #333338;
+  --color-accent: #ff5c50;
+  --color-accent-soft: #2a1917;
+  --color-accent-contrast: #17181a;
+  --color-danger: #ff6b61;
+  --color-success: #4ade80;
+  --color-focus: #8ab4f8;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }
 
 *,

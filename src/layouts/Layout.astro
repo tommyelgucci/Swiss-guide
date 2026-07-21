@@ -2,6 +2,7 @@
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import SiteSearch from '../components/SiteSearch.astro';
 import ChatWidget from '../components/ChatWidget.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -97,6 +98,7 @@ const checklistLabels: Record<string, string> = {
 <html lang={lang}>
   <head>
     <meta charset="UTF-8" />
+    <script is:inline>(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={pageDescription} />
@@ -156,6 +158,7 @@ const checklistLabels: Record<string, string> = {
           <a href={`/${lang}/tax-calculator`}>{taxCalcLabels[lang] || taxCalcLabels.en}</a>
         </nav>
         <SiteSearch lang={lang} />
+        <ThemeToggle lang={lang} />
         <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>
     </header>

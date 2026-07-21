@@ -15,12 +15,18 @@ const app = express();
 // siempre sería la IP del proxy y el rate limiting por IP no serviría.
 app.set('trust proxy', 1);
 
+// Hash del único script inline del sitio (bootstrap de tema en el <head>
+// de Layout.astro, evita el flash del tema equivocado antes de que cargue
+// el CSS). Si se edita ese script hay que recalcular este hash — el error
+// de CSP en la consola del navegador trae el hash correcto listo para copiar.
+const THEME_BOOTSTRAP_SCRIPT_HASH = "'sha256-8vu7JPBmFieTRgZYxooHaqDpi//mMnwgj8HOBW4m9tk='";
+
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", THEME_BOOTSTRAP_SCRIPT_HASH],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:'],
