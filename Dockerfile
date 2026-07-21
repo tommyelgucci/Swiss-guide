@@ -1,11 +1,13 @@
 FROM node:20-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-# npm install (not npm ci): el lockfile puede no listar el binario nativo
-# de Rollup para la arquitectura de build (npm/cli#4828 — optionalDependencies
-# no siempre viajan bien entre arquitecturas distintas). npm install
-# re-resuelve el binario correcto para la máquina donde se construye.
-RUN npm install
+# Se borra package-lock.json antes de instalar: el lockfile del repo se
+# generó en x86_64 y trae resuelto el binario nativo de Rollup para esa
+# arquitectura (npm/cli#4828 — optionalDependencies no viajan bien entre
+# arquitecturas). Si el lockfile existe, "npm install" intenta respetarlo
+# y puede no re-resolver el binario correcto para ARM64. Sin lockfile,
+# npm resuelve todo desde cero para la máquina real donde se construye.
+RUN rm -f package-lock.json && npm install
 COPY . .
 RUN npm run build
 
