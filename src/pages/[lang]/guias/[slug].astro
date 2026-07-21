@@ -6,14 +6,20 @@ export async function getStaticPaths() {
   const todasLasGuias = await getCollection('guias-universales');
   return todasLasGuias.map((guia) => {
     const [lang, slug] = guia.slug.split('/');
+    // Idiomas en los que existe esta misma guía (mismo slug), para no
+    // ofrecer en el selector de idioma un enlace a una traducción que
+    // todavía no existe.
+    const availableLangs = todasLasGuias
+      .filter((g) => g.slug.split('/')[1] === slug)
+      .map((g) => g.slug.split('/')[0]);
     return {
       params: { lang, slug },
-      props: { guia },
+      props: { guia, availableLangs },
     };
   });
 }
 
-const { guia } = Astro.props;
+const { guia, availableLangs } = Astro.props;
 const { lang } = Astro.params;
 const { Content } = await guia.render();
 
@@ -26,7 +32,7 @@ const backLabels: Record<string, string> = {
   pt: '← Todos os guias',
 };
 ---
-<Layout title={guia.data.titulo} lang={lang}>
+<Layout title={guia.data.titulo} lang={lang} availableLangs={availableLangs}>
   <div class="container">
     <a class="back-link" href={`/${lang}/`}>{backLabels[lang] || backLabels.es}</a>
     <article>

@@ -97,7 +97,21 @@ function sanitizeResult(parsed) {
   return { score, summary, strengths, issues };
 }
 
-router.post('/analyze', upload.single('cv'), async (req, res) => {
+function handleUpload(req, res, next) {
+  upload.single('cv')(req, res, (err) => {
+    if (!err) return next();
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res
+        .status(413)
+        .json({ error: 'El archivo supera el límite de 5 MB. / File exceeds the 5 MB limit.' });
+    }
+    return res
+      .status(400)
+      .json({ error: 'No se pudo procesar el archivo subido. / Could not process the uploaded file.' });
+  });
+}
+
+router.post('/analyze', handleUpload, async (req, res) => {
   if (!GROQ_API_KEY) {
     return res.status(503).json({ error: 'IA no configurada en el servidor (falta GROQ_API_KEY)' });
   }

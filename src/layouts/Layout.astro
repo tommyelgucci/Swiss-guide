@@ -5,8 +5,9 @@ import '../styles/global.css';
 interface Props {
   title: string;
   lang: string;
+  availableLangs?: string[];
 }
-const { title, lang } = Astro.props;
+const { title, lang, availableLangs } = Astro.props;
 
 const toolsLang = lang === 'en' ? 'en' : 'es';
 const footerText: Record<string, string> = {
@@ -52,7 +53,7 @@ const footerText: Record<string, string> = {
             {lang === 'en' ? 'Absence checklist' : 'Checklist de ausencias'}
           </a>
         </nav>
-        <LanguageSwitcher currentLang={lang} />
+        <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>
     </header>
     <main class="container-wide">

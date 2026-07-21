@@ -1,10 +1,14 @@
 ---
 interface Props {
   currentLang: string;
+  // Idiomas en los que esta página concreta existe de verdad. Por defecto,
+  // los 6 — pero páginas que solo tienen contenido en ES/EN (herramientas,
+  // guías no traducidas) deben pasar explícitamente cuáles.
+  availableLangs?: string[];
 }
-const { currentLang } = Astro.props;
+const { currentLang, availableLangs } = Astro.props;
 
-const idiomas = [
+const todosLosIdiomas = [
   { code: 'es', label: 'Español' },
   { code: 'de', label: 'Deutsch' },
   { code: 'en', label: 'English' },
@@ -12,6 +16,10 @@ const idiomas = [
   { code: 'it', label: 'Italiano' },
   { code: 'pt', label: 'Português' },
 ];
+
+const idiomas = availableLangs
+  ? todosLosIdiomas.filter((idioma) => availableLangs.includes(idioma.code))
+  : todosLosIdiomas;
 
 // Reemplaza el segmento de idioma en la URL actual, ej:
 // /es/guias/lamal -> /de/guias/lamal
