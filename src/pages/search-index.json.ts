@@ -33,6 +33,7 @@ export const GET: APIRoute = async () => {
   for (const lang of ALL_LANGS) {
     entries.push({ lang, title: TOOLS[lang].taxCalc, text: '', url: `/${lang}/tax-calculator`, kind: 'tool' });
     entries.push({ lang, title: TOOLS[lang].legal, text: '', url: `/${lang}/legal`, kind: 'page' });
+    entries.push({ lang, title: TOOLS[lang].checklist, text: '', url: `/${lang}/checklist-ausencias`, kind: 'tool' });
   }
   for (const lang of ['es', 'en']) {
     entries.push({ lang, title: TOOLS[lang].porPais, text: '', url: `/${lang}/por-pais`, kind: 'page' });
@@ -40,7 +41,6 @@ export const GET: APIRoute = async () => {
   for (const lang of TOOL_LANGS) {
     entries.push({ lang, title: TOOLS[lang].cvBuilder, text: '', url: `/${lang}/cv-builder`, kind: 'tool' });
     entries.push({ lang, title: TOOLS[lang].cvAnalyzer, text: '', url: `/${lang}/cv-analyzer`, kind: 'tool' });
-    entries.push({ lang, title: TOOLS[lang].checklist, text: '', url: `/${lang}/checklist-ausencias`, kind: 'tool' });
   }
 
   return new Response(JSON.stringify(entries), {

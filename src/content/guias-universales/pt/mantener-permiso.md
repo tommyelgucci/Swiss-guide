@@ -23,10 +23,8 @@ sem nunca chegar aos 6 meses seguidos, a renovação ainda pode ser
 questionada.
 
 Tem uma viagem longa planejada? Use o
-[checklist de ausências](/en/checklist-ausencias) (em inglês — a
-ferramenta só está disponível em inglês, alemão, italiano e francês) para
-ver em 3 perguntas o que você precisa fazer de acordo com sua autorização,
-motivo e duração.
+[checklist de ausências](/pt/checklist-ausencias) para ver em 3 perguntas
+o que você precisa fazer de acordo com sua autorização, motivo e duração.
 
 ## Mito vs. realidade
 

@@ -122,9 +122,12 @@ const t = {
     <h3>{t.issuesLabel}</h3>
     <ul id="result-issues"></ul>
   </section>
+
+  <script type="application/json" id="cv-analyzer-i18n" set:html={JSON.stringify({ t, lang })} />
 </Layout>
 
-<script define:vars={{ t, lang }}>
+<script>
+  const { t, lang } = JSON.parse(document.getElementById('cv-analyzer-i18n').textContent);
   const form = document.getElementById('analyzer-form');
   const fileInput = document.getElementById('cv-file');
   const analyzeBtn = document.getElementById('analyze-btn');

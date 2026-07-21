@@ -12,12 +12,12 @@ export const GET: APIRoute = async () => {
     urls.push(`${SITE}/${lang}/`);
     urls.push(`${SITE}/${lang}/legal/`);
     urls.push(`${SITE}/${lang}/tax-calculator/`);
+    urls.push(`${SITE}/${lang}/checklist-ausencias/`);
   }
 
   for (const lang of TOOL_LANGS) {
     urls.push(`${SITE}/${lang}/cv-builder/`);
     urls.push(`${SITE}/${lang}/cv-analyzer/`);
-    urls.push(`${SITE}/${lang}/checklist-ausencias/`);
   }
 
   const guides = await getCollection('guias-universales');

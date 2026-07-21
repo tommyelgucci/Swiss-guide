@@ -414,9 +414,12 @@ const t = {
       </div>
     </section>
   </div>
+
+  <script type="application/json" id="cv-builder-i18n" set:html={JSON.stringify({ t, lang })} />
 </Layout>
 
-<script define:vars={{ t, lang }}>
+<script>
+  const { t, lang } = JSON.parse(document.getElementById('cv-builder-i18n').textContent);
   const STORAGE_KEY = `swissguide_cv_builder_${lang}_v1`;
 
   const experienceListEl = document.getElementById('experience-list');
