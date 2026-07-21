@@ -576,6 +576,7 @@ const cantonOptions = [...CANTONS].sort((a, b) => a.rate100k - b.rate100k);
     function render() {
       const inputs = currentInputs();
       els.grossOutput.textContent = chf(inputs.grossMonthly);
+      els.gross.setAttribute('aria-valuetext', chf(inputs.grossMonthly));
 
       const b = computeBreakdown(inputs);
       document.getElementById('detail-canton').textContent = b.canton.names[lang] || b.canton.names.en;
@@ -589,6 +590,7 @@ const cantonOptions = [...CANTONS].sort((a, b) => a.rate100k - b.rate100k);
 
       const pillarContribution = Number(els.pillar3a.value);
       els.pillar3aOutput.textContent = chf(pillarContribution);
+      els.pillar3a.setAttribute('aria-valuetext', chf(pillarContribution));
       els.pillarSavingsAmount.textContent = chf(pillar3aSavings(b, pillarContribution));
 
       const taxableApprox = Math.max(0, b.grossAnnual - b.ahv - b.alv - b.nbu - b.bvg);

@@ -50,6 +50,11 @@ const footerText: Record<string, string> = {
   pt: 'FirstStepsinCH — guias para estrangeiros na Suíça.',
 };
 
+const skipLabels: Record<string, string> = {
+  es: 'Saltar al contenido', de: 'Zum Inhalt springen', en: 'Skip to content',
+  fr: 'Passer au contenu', it: 'Vai al contenuto', pt: 'Pular para o conteúdo',
+};
+
 const legalLabels: Record<string, string> = {
   es: 'Aviso legal y privacidad',
   de: 'Impressum und Datenschutz',
@@ -114,6 +119,7 @@ const taxCalcLabels: Record<string, string> = {
     />
   </head>
   <body>
+    <a class="skip-link" href="#main">{skipLabels[lang] || skipLabels.en}</a>
     <header class="site-header">
       <div class="site-header-inner">
         <a class="site-brand" href={`/${lang}/`}>
@@ -143,7 +149,7 @@ const taxCalcLabels: Record<string, string> = {
         <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>
     </header>
-    <main class="container-wide">
+    <main id="main" class="container-wide">
       <slot />
     </main>
     <ChatWidget lang={lang} />

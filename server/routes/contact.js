@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { createRateLimiter } from '../lib/rateLimit.js';
 
 const router = Router();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -13,25 +15,18 @@ const ADMIN_TOKEN = process.env.CONTACT_ADMIN_TOKEN;
 const MAX_QUESTION_LENGTH = 2000;
 const MAX_EMAIL_LENGTH = 200;
 
-// Limitador simple en memoria: máximo 5 envíos por IP cada 10 minutos.
-const submissionsByIp = new Map();
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_MAX = 5;
+// Máximo 5 envíos por IP cada 10 minutos.
+const contactRateLimit = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 5 });
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const timestamps = (submissionsByIp.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  timestamps.push(now);
-  submissionsByIp.set(ip, timestamps);
-  return timestamps.length > RATE_LIMIT_MAX;
+function tokenMatches(provided) {
+  if (!ADMIN_TOKEN || typeof provided !== 'string') return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(ADMIN_TOKEN);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
 }
 
-router.post('/', (req, res) => {
-  const ip = req.ip || 'unknown';
-  if (isRateLimited(ip)) {
-    return res.status(429).json({ error: 'Too many submissions, please try again later.' });
-  }
-
+router.post('/', contactRateLimit, (req, res) => {
   const { question, email, lang, page } = req.body || {};
 
   if (typeof question !== 'string' || !question.trim()) {
@@ -70,7 +65,7 @@ router.post('/', (req, res) => {
 // entorno CONTACT_ADMIN_TOKEN). Sin token configurado, el endpoint está
 // deshabilitado por completo — no expone nada por accidente.
 router.get('/', (req, res) => {
-  if (!ADMIN_TOKEN || req.query.token !== ADMIN_TOKEN) {
+  if (!tokenMatches(req.query.token)) {
     return res.status(404).end();
   }
   if (!fs.existsSync(dataFile)) {

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
 Sitemap: https://firststeps-in-ch.containers.snapdeploy.app/sitemap.xml

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import mammoth from 'mammoth';
 import pdfParse from 'pdf-parse';
+import { createRateLimiter } from '../lib/rateLimit.js';
 
 const router = Router();
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -13,6 +14,10 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
+
+// El análisis llama a una API de pago (Groq) por cada request — sin límite
+// esto es un vector de abuso de costo. Máximo 10 análisis por IP cada hora.
+const analyzeRateLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 });
 
 router.get('/status', (req, res) => {
   res.json({ enabled: Boolean(GROQ_API_KEY) });
@@ -133,7 +138,7 @@ function handleUpload(req, res, next) {
   });
 }
 
-router.post('/analyze', handleUpload, async (req, res) => {
+router.post('/analyze', analyzeRateLimit, handleUpload, async (req, res) => {
   if (!GROQ_API_KEY) {
     return res.status(503).json({ error: 'AI not configured on the server (missing GROQ_API_KEY)' });
   }
@@ -178,9 +183,10 @@ router.post('/analyze', handleUpload, async (req, res) => {
 
     if (!groqRes.ok) {
       const errText = await groqRes.text().catch(() => '');
+      console.error(`Groq error (${groqRes.status}): ${errText || groqRes.statusText}`);
       return res
         .status(502)
-        .json({ error: `Groq error (${groqRes.status}): ${errText || groqRes.statusText}` });
+        .json({ error: 'The AI service is temporarily unavailable. Please try again in a moment.' });
     }
 
     const data = await groqRes.json();
@@ -195,7 +201,8 @@ router.post('/analyze', handleUpload, async (req, res) => {
     }
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Error desconocido' });
+    console.error('CV analysis failed', err);
+    res.status(500).json({ error: 'Something went wrong while analyzing your CV. Please try again.' });
   }
 });
 

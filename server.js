@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cvAnalyzerRoutes from './server/routes/cv-analyzer.js';
@@ -9,6 +10,28 @@ const distDir = path.join(__dirname, 'dist');
 const port = process.env.PORT || 4321;
 
 const app = express();
+
+// SnapDeploy pone el contenedor detrás de un proxy — sin esto, req.ip
+// siempre sería la IP del proxy y el rate limiting por IP no serviría.
+app.set('trust proxy', 1);
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  })
+);
 
 app.use(express.json());
 
