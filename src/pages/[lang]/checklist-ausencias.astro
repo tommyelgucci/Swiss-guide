@@ -2,48 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 
 export function getStaticPaths() {
-  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+  // Solo en/de/it/fr — inglés + los 3 idiomas oficiales de Suiza cubiertos
+  // por la app. Nunca español, que no es idioma suizo.
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'it' } },
+    { params: { lang: 'fr' } },
+  ];
 }
 
-const { lang } = Astro.params as { lang: 'es' | 'en' };
+const { lang } = Astro.params as { lang: 'en' | 'de' | 'it' | 'fr' };
 
 const t = {
-  es: {
-    pageTitle: 'Checklist de ausencias y permiso',
-    heading: '¿Vas a salir de Suiza? Revisa qué necesitas hacer',
-    intro:
-      'Responde 3 preguntas y te decimos qué acciones conviene tomar antes de irte, tanto de cara a tu permiso de residencia como a tu empleador. Es una guía orientativa basada en reglas generales, no un trámite oficial.',
-    permitLabel: 'Tu permiso actual',
-    permitB: 'Permiso B',
-    permitC: 'Permiso C',
-    reasonLabel: 'Motivo de la ausencia',
-    reasonOptions: [
-      { value: 'vacaciones', label: 'Vacaciones / viaje personal' },
-      { value: 'trabajo-remoto', label: 'Trabajo remoto desde otro país' },
-      { value: 'estudios', label: 'Estudios en el extranjero' },
-      { value: 'cuidado-familiar', label: 'Cuidado de un familiar' },
-      { value: 'otro', label: 'Otro motivo' },
-    ],
-    durationLabel: 'Duración prevista',
-    durationOptions: [
-      { value: 'menos-3', label: 'Menos de 3 meses' },
-      { value: '3-a-6', label: 'Entre 3 y 6 meses' },
-      { value: 'mas-6', label: 'Más de 6 meses' },
-    ],
-    checkBtn: 'Ver qué necesito hacer',
-    resultHeading: 'Resultado',
-    permitRisk: 'Riesgo para tu permiso',
-    employerRisk: 'De cara a tu empleador',
-    actions: 'Qué hacer antes de irte',
-    riskLow: 'Bajo',
-    riskMedium: 'A vigilar',
-    riskHigh: 'Acción obligatoria',
-    guideLink: 'Lee la guía completa sobre mantener tu permiso →',
-    disclaimer:
-      'Esta herramienta aplica reglas generales de forma automática, no analiza tu caso concreto ni sustituye a la oficina de migración de tu cantón — cada cantón puede aplicar matices propios.',
-  },
   en: {
     pageTitle: 'Absence & permit checklist',
+    backHome: '← Back to home',
     heading: 'Leaving Switzerland? Check what you need to do',
     intro:
       "Answer 3 questions and we'll tell you what to sort out before you leave, both for your residence permit and with your employer. This is a general-rules guide, not an official procedure.",
@@ -76,13 +50,121 @@ const t = {
     disclaimer:
       "This tool applies general rules automatically — it doesn't analyze your specific case or replace your cantonal migration office, and each canton can apply its own nuances.",
   },
+  de: {
+    pageTitle: 'Checkliste für Abwesenheit und Bewilligung',
+    backHome: '← Zur Startseite',
+    heading: 'Verlässt du die Schweiz? Prüfe, was du tun musst',
+    intro:
+      'Beantworte 3 Fragen und wir sagen dir, was du vor deiner Abreise regeln solltest — sowohl für deine Aufenthaltsbewilligung als auch gegenüber deinem Arbeitgeber. Dies ist eine Orientierungshilfe nach allgemeinen Regeln, kein offizielles Verfahren.',
+    permitLabel: 'Deine aktuelle Bewilligung',
+    permitB: 'Bewilligung B',
+    permitC: 'Bewilligung C',
+    reasonLabel: 'Grund der Abwesenheit',
+    reasonOptions: [
+      { value: 'vacaciones', label: 'Ferien / Privatreise' },
+      { value: 'trabajo-remoto', label: 'Remote-Arbeit aus einem anderen Land' },
+      { value: 'estudios', label: 'Studium im Ausland' },
+      { value: 'cuidado-familiar', label: 'Pflege eines Familienmitglieds' },
+      { value: 'otro', label: 'Anderer Grund' },
+    ],
+    durationLabel: 'Geplante Dauer',
+    durationOptions: [
+      { value: 'menos-3', label: 'Weniger als 3 Monate' },
+      { value: '3-a-6', label: 'Zwischen 3 und 6 Monaten' },
+      { value: 'mas-6', label: 'Mehr als 6 Monate' },
+    ],
+    checkBtn: 'Prüfen, was ich tun muss',
+    resultHeading: 'Ergebnis',
+    permitRisk: 'Risiko für deine Bewilligung',
+    employerRisk: 'Gegenüber deinem Arbeitgeber',
+    actions: 'Was vor der Abreise zu tun ist',
+    riskLow: 'Niedrig',
+    riskMedium: 'Im Auge behalten',
+    riskHigh: 'Handlung erforderlich',
+    guideLink: 'Lies den vollständigen Leitfaden zum Erhalt deiner Bewilligung →',
+    disclaimer:
+      'Dieses Tool wendet automatisch allgemeine Regeln an — es analysiert nicht deinen konkreten Fall und ersetzt nicht deine kantonale Migrationsbehörde, und jeder Kanton kann eigene Nuancen anwenden.',
+  },
+  it: {
+    pageTitle: 'Checklist assenze e permesso',
+    backHome: '← Torna alla home',
+    heading: 'Stai per lasciare la Svizzera? Controlla cosa devi fare',
+    intro:
+      'Rispondi a 3 domande e ti diciamo cosa sistemare prima di partire, sia per il tuo permesso di soggiorno che con il tuo datore di lavoro. È una guida orientativa basata su regole generali, non una procedura ufficiale.',
+    permitLabel: 'Il tuo permesso attuale',
+    permitB: 'Permesso B',
+    permitC: 'Permesso C',
+    reasonLabel: "Motivo dell'assenza",
+    reasonOptions: [
+      { value: 'vacaciones', label: 'Vacanze / viaggio personale' },
+      { value: 'trabajo-remoto', label: 'Lavoro da remoto da un altro paese' },
+      { value: 'estudios', label: "Studi all'estero" },
+      { value: 'cuidado-familiar', label: 'Assistenza a un familiare' },
+      { value: 'otro', label: 'Altro motivo' },
+    ],
+    durationLabel: 'Durata prevista',
+    durationOptions: [
+      { value: 'menos-3', label: 'Meno di 3 mesi' },
+      { value: '3-a-6', label: 'Tra 3 e 6 mesi' },
+      { value: 'mas-6', label: 'Più di 6 mesi' },
+    ],
+    checkBtn: 'Vedi cosa devo fare',
+    resultHeading: 'Risultato',
+    permitRisk: 'Rischio per il tuo permesso',
+    employerRisk: 'Nei confronti del datore di lavoro',
+    actions: 'Cosa fare prima di partire',
+    riskLow: 'Basso',
+    riskMedium: 'Da tenere sotto controllo',
+    riskHigh: 'Azione obbligatoria',
+    guideLink: 'Leggi la guida completa su come mantenere il permesso →',
+    disclaimer:
+      "Questo strumento applica regole generali in modo automatico, non analizza il tuo caso specifico né sostituisce l'ufficio migrazione del tuo cantone — ogni cantone può applicare le proprie sfumature.",
+  },
+  fr: {
+    pageTitle: "Checklist d'absence et de permis",
+    backHome: '← Retour à l\'accueil',
+    heading: 'Vous quittez la Suisse ? Vérifiez ce qu\'il faut faire',
+    intro:
+      'Répondez à 3 questions et nous vous disons ce qu\'il faut régler avant de partir, tant pour votre titre de séjour qu\'avec votre employeur. Il s\'agit d\'un guide indicatif basé sur des règles générales, pas d\'une démarche officielle.',
+    permitLabel: 'Votre permis actuel',
+    permitB: 'Permis B',
+    permitC: 'Permis C',
+    reasonLabel: "Motif de l'absence",
+    reasonOptions: [
+      { value: 'vacaciones', label: 'Vacances / voyage personnel' },
+      { value: 'trabajo-remoto', label: 'Télétravail depuis un autre pays' },
+      { value: 'estudios', label: "Études à l'étranger" },
+      { value: 'cuidado-familiar', label: "Prise en charge d'un proche" },
+      { value: 'otro', label: 'Autre motif' },
+    ],
+    durationLabel: 'Durée prévue',
+    durationOptions: [
+      { value: 'menos-3', label: 'Moins de 3 mois' },
+      { value: '3-a-6', label: 'Entre 3 et 6 mois' },
+      { value: 'mas-6', label: 'Plus de 6 mois' },
+    ],
+    checkBtn: 'Voir ce que je dois faire',
+    resultHeading: 'Résultat',
+    permitRisk: 'Risque pour votre permis',
+    employerRisk: 'Vis-à-vis de votre employeur',
+    actions: 'Que faire avant de partir',
+    riskLow: 'Faible',
+    riskMedium: 'À surveiller',
+    riskHigh: 'Action obligatoire',
+    guideLink: 'Lisez le guide complet sur le maintien de votre permis →',
+    disclaimer:
+      "Cet outil applique des règles générales de façon automatique — il n'analyse pas votre cas précis et ne remplace pas votre office cantonal de la migration, et chaque canton peut appliquer ses propres nuances.",
+  },
 }[lang];
 
-const guideHref = `/${lang}/guias/mantener-permiso`;
+// La guía "mantener-permiso" solo existe en ES/EN — como esta herramienta ya
+// no incluye español, el enlace siempre cae al inglés.
+const guideHref = '/en/guias/mantener-permiso';
 ---
 
-<Layout title={t.pageTitle} lang={lang} availableLangs={['es', 'en']}>
+<Layout title={t.pageTitle} lang={lang} availableLangs={['en', 'de', 'it', 'fr']}>
   <div class="container">
+    <a class="back-link" href={`/${lang}/`}>{t.backHome}</a>
     <h1>{t.heading}</h1>
     <p>{t.intro}</p>
 
@@ -145,40 +227,6 @@ const guideHref = `/${lang}/guias/mantener-permiso`;
   const riskLabel = { low: t.riskLow, medium: t.riskMedium, high: t.riskHigh };
 
   const durationRules = {
-    es: {
-      'menos-3': {
-        risk: RISK.low,
-        permitText:
-          'Una ausencia de menos de 3 meses no pone en riesgo tu permiso. No es necesario notificar a Migración.',
-        employerText:
-          'Si cae dentro de tus vacaciones, no hay impacto. Si no, acuerda con tu empleador cómo se contabiliza (día no pagado, teletrabajo, etc.).',
-        actions: ['Confirma con RRHH cómo se registra la ausencia, si aplica.'],
-      },
-      '3-a-6': {
-        risk: RISK.medium,
-        permitText:
-          'No se extingue el permiso automáticamente (el límite legal son 6 meses seguidos), pero te acercas a la zona de riesgo, sobre todo si repites salidas largas en el mismo año.',
-        employerText:
-          'Necesitas un acuerdo formal por escrito de excedencia o ausencia no pagada — sin eso hay riesgo de que se interprete como abandono de puesto.',
-        actions: [
-          'Notifica de forma preventiva a tu oficina cantonal de migración.',
-          'Guarda constancia de tus fechas de salida y entrada.',
-          'Consigue un acuerdo por escrito con tu empleador antes de irte.',
-        ],
-      },
-      'mas-6': {
-        risk: RISK.high,
-        permitText:
-          'Riesgo alto: sin una prórroga de ausencia solicitada y aprobada ANTES de salir, tu permiso se extingue automáticamente al volver (Art. 61 LEI/AIG).',
-        employerText:
-          'Sin un acuerdo de excedencia, esta ausencia puede tratarse como abandono de puesto.',
-        actions: [
-          'Solicita la prórroga de ausencia en tu oficina cantonal de migración ANTES de la fecha de salida — es el paso obligatorio.',
-          'Consigue un acuerdo formal de excedencia con tu empleador.',
-          'Guarda toda la documentación (solicitud, respuesta, fechas) por si la necesitas al volver.',
-        ],
-      },
-    },
     en: {
       'menos-3': {
         risk: RISK.low,
@@ -213,17 +261,111 @@ const guideHref = `/${lang}/guias/mantener-permiso`;
         ],
       },
     },
+    de: {
+      'menos-3': {
+        risk: RISK.low,
+        permitText:
+          'Eine Abwesenheit von weniger als 3 Monaten gefährdet deine Bewilligung nicht. Eine Meldung an die Migrationsbehörde ist nicht nötig.',
+        employerText:
+          'Fällt sie in deine Ferien, gibt es keine Auswirkung. Falls nicht, vereinbare mit deinem Arbeitgeber, wie sie gezählt wird (unbezahlter Tag, Homeoffice usw.).',
+        actions: ['Kläre bei Bedarf mit der Personalabteilung, wie die Abwesenheit erfasst wird.'],
+      },
+      '3-a-6': {
+        risk: RISK.medium,
+        permitText:
+          'Die Bewilligung erlischt nicht automatisch (die gesetzliche Grenze liegt bei 6 zusammenhängenden Monaten), aber du näherst dich der Risikozone, besonders bei wiederholten längeren Abwesenheiten im selben Jahr.',
+        employerText:
+          'Du brauchst eine formelle, schriftliche Vereinbarung für unbezahlten Urlaub — ohne diese besteht das Risiko, dass es als Stellenaufgabe gewertet wird.',
+        actions: [
+          'Informiere vorsorglich deine kantonale Migrationsbehörde.',
+          'Bewahre einen Nachweis deiner Abreise- und Rückkehrdaten auf.',
+          'Hol dir vor der Abreise eine schriftliche Vereinbarung mit deinem Arbeitgeber ein.',
+        ],
+      },
+      'mas-6': {
+        risk: RISK.high,
+        permitText:
+          'Hohes Risiko: Ohne eine VOR der Abreise beantragte und bewilligte Abwesenheitsverlängerung erlischt deine Bewilligung bei der Rückkehr automatisch (Art. 61 AIG).',
+        employerText:
+          'Ohne eine Urlaubsvereinbarung kann diese Abwesenheit als Stellenaufgabe gewertet werden.',
+        actions: [
+          'Beantrage die Abwesenheitsverlängerung bei deiner kantonalen Migrationsbehörde VOR dem Abreisedatum — das ist der obligatorische Schritt.',
+          'Hol dir eine formelle Urlaubsvereinbarung mit deinem Arbeitgeber ein.',
+          'Bewahre alle Unterlagen (Antrag, Antwort, Daten) auf, falls du sie bei der Rückkehr brauchst.',
+        ],
+      },
+    },
+    it: {
+      'menos-3': {
+        risk: RISK.low,
+        permitText:
+          "Un'assenza inferiore a 3 mesi non mette a rischio il tuo permesso. Non è necessario notificare l'ufficio migrazione.",
+        employerText:
+          'Se rientra nelle tue ferie, non ci sono impatti. Altrimenti, concorda con il tuo datore di lavoro come viene conteggiata (giorno non retribuito, smart working, ecc.).',
+        actions: ["Verifica con le risorse umane come viene registrata l'assenza, se rilevante."],
+      },
+      '3-a-6': {
+        risk: RISK.medium,
+        permitText:
+          'Il permesso non si estingue automaticamente (il limite legale è di 6 mesi consecutivi), ma ti avvicini alla zona di rischio, specialmente se ripeti assenze lunghe nello stesso anno.',
+        employerText:
+          "Hai bisogno di un accordo formale scritto per l'aspettativa non retribuita — senza di esso c'è il rischio che venga interpretato come abbandono del posto di lavoro.",
+        actions: [
+          'Notifica preventivamente il tuo ufficio cantonale di migrazione.',
+          'Conserva una prova delle date di partenza e rientro.',
+          'Ottieni un accordo scritto con il tuo datore di lavoro prima di partire.',
+        ],
+      },
+      'mas-6': {
+        risk: RISK.high,
+        permitText:
+          'Rischio alto: senza una proroga di assenza richiesta e approvata PRIMA della partenza, il tuo permesso si estingue automaticamente al rientro (art. 61 LStrI).',
+        employerText:
+          'Senza un accordo di aspettativa, questa assenza può essere trattata come abbandono del posto di lavoro.',
+        actions: [
+          'Richiedi la proroga di assenza al tuo ufficio cantonale di migrazione PRIMA della data di partenza — è il passo obbligatorio.',
+          'Ottieni un accordo formale di aspettativa con il tuo datore di lavoro.',
+          'Conserva tutta la documentazione (richiesta, risposta, date) nel caso ti serva al rientro.',
+        ],
+      },
+    },
+    fr: {
+      'menos-3': {
+        risk: RISK.low,
+        permitText:
+          "Une absence de moins de 3 mois ne met pas votre permis en danger. Il n'est pas nécessaire de notifier l'office des migrations.",
+        employerText:
+          "Si elle tombe dans vos jours de vacances, il n'y a pas d'impact. Sinon, convenez avec votre employeur de la façon dont elle est comptabilisée (jour non payé, télétravail, etc.).",
+        actions: ["Vérifiez avec les RH comment l'absence est enregistrée, le cas échéant."],
+      },
+      '3-a-6': {
+        risk: RISK.medium,
+        permitText:
+          "Le permis ne s'éteint pas automatiquement (la limite légale est de 6 mois consécutifs), mais vous vous rapprochez de la zone à risque, surtout en cas d'absences longues répétées la même année.",
+        employerText:
+          "Vous avez besoin d'un accord écrit formel pour un congé sans solde — sans cela, il existe un risque que cela soit interprété comme un abandon de poste.",
+        actions: [
+          'Notifiez par précaution votre office cantonal des migrations.',
+          'Conservez une preuve de vos dates de départ et de retour.',
+          'Obtenez un accord écrit avec votre employeur avant de partir.',
+        ],
+      },
+      'mas-6': {
+        risk: RISK.high,
+        permitText:
+          "Risque élevé : sans une prolongation d'absence demandée et approuvée AVANT votre départ, votre permis s'éteint automatiquement à votre retour (art. 61 LEI).",
+        employerText:
+          'Sans accord de congé, cette absence peut être traitée comme un abandon de poste.',
+        actions: [
+          "Demandez la prolongation d'absence à votre office cantonal des migrations AVANT la date de départ — c'est l'étape obligatoire.",
+          'Obtenez un accord formel de congé avec votre employeur.',
+          'Conservez toute la documentation (demande, réponse, dates) au cas où vous en auriez besoin à votre retour.',
+        ],
+      },
+    },
   }[lang];
 
   const reasonNotes = {
-    es: {
-      estudios:
-        'Nota: algunos cantones ofrecen prórrogas más largas específicamente para estudios en el extranjero — pregunta por esa modalidad al solicitar.',
-      'cuidado-familiar':
-        'Nota: si es una emergencia familiar imprevista, explícalo a Migración — algunos cantones son flexibles con causas de fuerza mayor, pero igual necesitas la solicitud formal.',
-      'trabajo-remoto':
-        'Nota: trabajar para tu empleador suizo desde otro país durante mucho tiempo puede tener implicaciones fiscales y de seguridad social además de las del permiso — consúltalo también con RRHH.',
-    },
     en: {
       estudios:
         'Note: some cantons offer longer extensions specifically for studies abroad — ask about this option when applying.',
@@ -231,6 +373,30 @@ const guideHref = `/${lang}/guias/mantener-permiso`;
         'Note: if it is an unforeseen family emergency, explain it to the migration office — some cantons are flexible about force majeure reasons, but you still need the formal request.',
       'trabajo-remoto':
         'Note: working remotely for your Swiss employer from another country for a long time can have tax and social security implications beyond the permit ones — check with HR too.',
+    },
+    de: {
+      estudios:
+        'Hinweis: Manche Kantone bieten längere Verlängerungen speziell für ein Studium im Ausland — frage bei der Beantragung nach dieser Möglichkeit.',
+      'cuidado-familiar':
+        'Hinweis: Bei einem unvorhergesehenen familiären Notfall erkläre dies der Migrationsbehörde — manche Kantone sind bei Fällen höherer Gewalt flexibel, du brauchst aber trotzdem den formellen Antrag.',
+      'trabajo-remoto':
+        'Hinweis: Längere Remote-Arbeit für deinen Schweizer Arbeitgeber aus dem Ausland kann neben den bewilligungsrechtlichen auch steuerliche und sozialversicherungsrechtliche Folgen haben — sprich auch mit der Personalabteilung.',
+    },
+    it: {
+      estudios:
+        "Nota: alcuni cantoni offrono proroghe più lunghe specificamente per studi all'estero — chiedi di questa opzione al momento della richiesta.",
+      'cuidado-familiar':
+        "Nota: se si tratta di un'emergenza familiare imprevista, spiegalo all'ufficio migrazione — alcuni cantoni sono flessibili per cause di forza maggiore, ma serve comunque la richiesta formale.",
+      'trabajo-remoto':
+        'Nota: lavorare a distanza per il tuo datore di lavoro svizzero da un altro paese per molto tempo può avere implicazioni fiscali e previdenziali oltre a quelle del permesso — parlane anche con le risorse umane.',
+    },
+    fr: {
+      estudios:
+        "Remarque : certains cantons offrent des prolongations plus longues spécifiquement pour des études à l'étranger — renseignez-vous sur cette option lors de la demande.",
+      'cuidado-familiar':
+        "Remarque : s'il s'agit d'une urgence familiale imprévue, expliquez-le à l'office des migrations — certains cantons sont flexibles en cas de force majeure, mais la demande formelle reste nécessaire.",
+      'trabajo-remoto':
+        "Remarque : télétravailler pour votre employeur suisse depuis un autre pays pendant longtemps peut avoir des implications fiscales et de sécurité sociale en plus de celles liées au permis — consultez également les RH.",
     },
   }[lang];
 

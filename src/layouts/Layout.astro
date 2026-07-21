@@ -9,15 +9,29 @@ interface Props {
 }
 const { title, lang, availableLangs } = Astro.props;
 
-const toolsLang = lang === 'en' ? 'en' : 'es';
+// El creador/analizador de CV solo existen en en/de/it/fr (idiomas oficiales
+// de Suiza + inglés) — nunca en español, que no es idioma suizo. Si la
+// página actual está en un idioma sin herramientas (es, pt), el enlace cae
+// a inglés.
+const toolLangs = ['en', 'de', 'it', 'fr'];
+const toolsLang = toolLangs.includes(lang) ? lang : 'en';
+
 const footerText: Record<string, string> = {
-  es: 'FirstStepinCH — guías para extranjeros en Suiza.',
-  de: 'FirstStepinCH — Leitfäden für Ausländer in der Schweiz.',
-  en: 'FirstStepinCH — guides for foreigners in Switzerland.',
-  fr: 'FirstStepinCH — guides pour les étrangers en Suisse.',
-  it: 'FirstStepinCH — guide per stranieri in Svizzera.',
-  pt: 'FirstStepinCH — guias para estrangeiros na Suíça.',
+  es: 'FirstStepsinCH — guías para extranjeros en Suiza.',
+  de: 'FirstStepsinCH — Leitfäden für Ausländer in der Schweiz.',
+  en: 'FirstStepsinCH — guides for foreigners in Switzerland.',
+  fr: 'FirstStepsinCH — guides pour les étrangers en Suisse.',
+  it: 'FirstStepsinCH — guide per stranieri in Svizzera.',
+  pt: 'FirstStepsinCH — guias para estrangeiros na Suíça.',
 };
+
+const toolLabels: Record<string, { builder: string; analyzer: string; checklist: string }> = {
+  en: { builder: 'CV builder', analyzer: 'CV analyzer', checklist: 'Absence checklist' },
+  de: { builder: 'Lebenslauf-Ersteller', analyzer: 'Lebenslauf-Analyse', checklist: 'Abwesenheits-Checkliste' },
+  it: { builder: 'Creatore di CV', analyzer: 'Analizzatore di CV', checklist: 'Checklist assenze' },
+  fr: { builder: 'Créateur de CV', analyzer: 'Analyseur de CV', checklist: "Checklist d'absence" },
+};
+const labels = toolLabels[toolsLang];
 ---
 <!doctype html>
 <html lang={lang}>
@@ -36,22 +50,26 @@ const footerText: Record<string, string> = {
     <header class="site-header">
       <div class="site-header-inner">
         <a class="site-brand" href={`/${lang}/`}>
-          <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-            <rect width="30" height="30" rx="8" fill="var(--color-accent)" />
-            <path d="M8 20L13 20L13 15L18 15L18 10L22 10" stroke="var(--color-accent-contrast)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <svg class="brand-mark" width="36" height="36" viewBox="0 0 60 60" aria-hidden="true">
+            <rect width="60" height="60" rx="14" fill="var(--color-accent)" />
+            <g transform="translate(11.25,10.08)">
+              <svg width="37.5" height="37.5" viewBox="0 0 60 60" fill="none">
+                <path d="M8 38 L8 22 Q8 20 9.5 18.5 L28 3 Q30 1.5 32 3 L50.5 18.5 Q52 20 52 22 L52 38" stroke="var(--color-accent-contrast)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <line x1="8" y1="38" x2="52" y2="38" stroke="var(--color-accent-contrast)" stroke-width="5" stroke-linecap="round" />
+                <rect x="25" y="26" width="10" height="12" fill="var(--color-accent-contrast)" />
+                <rect x="28" y="29" width="4" height="1.6" fill="var(--color-accent)" />
+                <rect x="29.2" y="27.8" width="1.6" height="4.4" fill="var(--color-accent)" />
+                <ellipse cx="14" cy="48" rx="3.5" ry="2.3" fill="var(--color-accent-contrast)" transform="rotate(-20 14 48)" />
+                <ellipse cx="20" cy="43" rx="3.5" ry="2.3" fill="var(--color-accent-contrast)" transform="rotate(-20 20 43)" />
+              </svg>
+            </g>
           </svg>
-          <span>FirstStepinCH</span>
+          <span>FirstStepsinCH</span>
         </a>
         <nav class="tools-nav" aria-label="Herramientas">
-          <a href={`/${toolsLang}/cv-builder`}>
-            {lang === 'en' ? 'CV builder' : 'Creador de CV'}
-          </a>
-          <a href={`/${toolsLang}/cv-analyzer`}>
-            {lang === 'en' ? 'CV analyzer' : 'Analizador de CV'}
-          </a>
-          <a href={`/${toolsLang}/checklist-ausencias`}>
-            {lang === 'en' ? 'Absence checklist' : 'Checklist de ausencias'}
-          </a>
+          <a href={`/${toolsLang}/cv-builder`}>{labels.builder}</a>
+          <a href={`/${toolsLang}/cv-analyzer`}>{labels.analyzer}</a>
+          <a href={`/${toolsLang}/checklist-ausencias`}>{labels.checklist}</a>
         </nav>
         <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>

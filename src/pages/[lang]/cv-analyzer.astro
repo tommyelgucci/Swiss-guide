@@ -2,32 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 
 export function getStaticPaths() {
-  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+  // Solo en/de/it/fr — inglés + los 3 idiomas oficiales de Suiza cubiertos
+  // por la app. Nunca español, que no es idioma suizo.
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'it' } },
+    { params: { lang: 'fr' } },
+  ];
 }
 
-const { lang } = Astro.params as { lang: 'es' | 'en' };
+const { lang } = Astro.params as { lang: 'en' | 'de' | 'it' | 'fr' };
 
 const t = {
-  es: {
-    pageTitle: 'Analizador de CV (ATS)',
-    heading: 'Analizador de CV para el mercado suizo',
-    intro:
-      'Sube tu CV (PDF o DOCX, con texto seleccionable, no un escaneo) y una IA lo evalúa contra las convenciones suizas de reclutamiento y ATS: puntuación, puntos fuertes, y qué mejorar.',
-    fileLabel: 'Archivo del CV (PDF o DOCX, máx. 5 MB)',
-    analyzeBtn: 'Analizar CV',
-    analyzing: 'Analizando…',
-    disabledNotice:
-      'El analizador de IA no está disponible en este momento (falta configuración del servidor). El resto del sitio sigue funcionando con normalidad.',
-    noFileError: 'Selecciona primero un archivo.',
-    scoreLabel: 'Puntuación',
-    summaryLabel: 'Valoración general',
-    strengthsLabel: 'Puntos fuertes',
-    issuesLabel: 'A mejorar',
-    privacyNote:
-      'El archivo se envía al servidor solo para extraer el texto y generar el análisis; no se guarda.',
-  },
   en: {
     pageTitle: 'CV Analyzer (ATS)',
+    backHome: '← Back to home',
     heading: 'CV analyzer for the Swiss market',
     intro:
       'Upload your CV (PDF or DOCX, with selectable text, not a scan) and an AI evaluates it against Swiss recruiting and ATS conventions: a score, strengths, and what to improve.',
@@ -44,10 +34,68 @@ const t = {
     privacyNote:
       'The file is sent to the server only to extract text and generate the analysis; it is not stored.',
   },
+  de: {
+    pageTitle: 'Lebenslauf-Analyse (ATS)',
+    backHome: '← Zur Startseite',
+    heading: 'Lebenslauf-Analyse für den Schweizer Markt',
+    intro:
+      'Lade deinen Lebenslauf hoch (PDF oder DOCX, mit auswählbarem Text, kein Scan) und eine KI bewertet ihn nach Schweizer Rekrutierungs- und ATS-Konventionen: Punktzahl, Stärken und Verbesserungsvorschläge.',
+    fileLabel: 'Lebenslauf-Datei (PDF oder DOCX, max. 5 MB)',
+    analyzeBtn: 'Lebenslauf analysieren',
+    analyzing: 'Wird analysiert…',
+    disabledNotice:
+      'Die KI-Analyse ist derzeit nicht verfügbar (Serverkonfiguration fehlt). Der Rest der Website funktioniert normal weiter.',
+    noFileError: 'Wähle zuerst eine Datei aus.',
+    scoreLabel: 'Punktzahl',
+    summaryLabel: 'Gesamtbewertung',
+    strengthsLabel: 'Stärken',
+    issuesLabel: 'Verbesserungspotenzial',
+    privacyNote:
+      'Die Datei wird nur zur Textextraktion und Analyse an den Server gesendet; sie wird nicht gespeichert.',
+  },
+  it: {
+    pageTitle: 'Analizzatore di CV (ATS)',
+    backHome: '← Torna alla home',
+    heading: 'Analizzatore di CV per il mercato svizzero',
+    intro:
+      'Carica il tuo CV (PDF o DOCX, con testo selezionabile, non una scansione) e un\'IA lo valuta secondo le convenzioni svizzere di reclutamento e ATS: punteggio, punti di forza e cosa migliorare.',
+    fileLabel: 'File del CV (PDF o DOCX, max. 5 MB)',
+    analyzeBtn: 'Analizza CV',
+    analyzing: 'Analisi in corso…',
+    disabledNotice:
+      'L\'analizzatore IA non è disponibile in questo momento (manca la configurazione del server). Il resto del sito continua a funzionare normalmente.',
+    noFileError: 'Seleziona prima un file.',
+    scoreLabel: 'Punteggio',
+    summaryLabel: 'Valutazione generale',
+    strengthsLabel: 'Punti di forza',
+    issuesLabel: 'Da migliorare',
+    privacyNote:
+      'Il file viene inviato al server solo per estrarre il testo e generare l\'analisi; non viene conservato.',
+  },
+  fr: {
+    pageTitle: 'Analyseur de CV (ATS)',
+    backHome: '← Retour à l\'accueil',
+    heading: 'Analyseur de CV pour le marché suisse',
+    intro:
+      'Téléchargez votre CV (PDF ou DOCX, avec texte sélectionnable, pas un scan) et une IA l\'évalue selon les conventions suisses de recrutement et ATS : score, points forts et axes d\'amélioration.',
+    fileLabel: 'Fichier du CV (PDF ou DOCX, max. 5 Mo)',
+    analyzeBtn: 'Analyser le CV',
+    analyzing: 'Analyse en cours…',
+    disabledNotice:
+      "L'analyseur IA n'est pas disponible pour le moment (configuration serveur manquante). Le reste du site fonctionne normalement.",
+    noFileError: "Sélectionnez d'abord un fichier.",
+    scoreLabel: 'Score',
+    summaryLabel: 'Évaluation générale',
+    strengthsLabel: 'Points forts',
+    issuesLabel: 'À améliorer',
+    privacyNote:
+      "Le fichier est envoyé au serveur uniquement pour extraire le texte et générer l'analyse ; il n'est pas conservé.",
+  },
 }[lang];
 ---
 
-<Layout title={t.pageTitle} lang={lang} availableLangs={['es', 'en']}>
+<Layout title={t.pageTitle} lang={lang} availableLangs={['en', 'de', 'it', 'fr']}>
+  <a class="back-link" href={`/${lang}/`}>{t.backHome}</a>
   <h1>{t.heading}</h1>
   <p>{t.intro}</p>
 

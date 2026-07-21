@@ -1,4 +1,4 @@
-# FirstStepinCH
+# FirstStepsinCH
 
 Prototipo base en Astro para una guía multilingüe (ES/DE/EN/FR/IT/PT) sobre
 vivir y trabajar en Suiza, dirigida a cualquier extranjero, con contenido
@@ -50,8 +50,7 @@ src/
 
 Además de las guías, `src/pages/[lang]/cv-builder.astro` es una herramienta
 interactiva (formulario + preview en vivo + export a PDF vía impresión del
-navegador) para crear un CV en formato suizo. Solo disponible en ES/EN por
-ahora (mucho texto de interfaz que traducir). Todo el estado se guarda en
+navegador) para crear un CV en formato suizo. Todo el estado se guarda en
 `localStorage`, no hay backend involucrado — el PDF se genera con CSS de
 impresión (`@media print`), sin librerías extra.
 
@@ -62,6 +61,15 @@ Aloenglish: `GET /status` para saber si la IA está configurada, `GROQ_API_KEY`
 + `GROQ_MODEL` como env vars, `response_format: json_object` + parseo con
 fallback). Devuelve puntuación, valoración general, puntos fuertes y una
 lista de mejoras concretas según convenciones suizas de reclutamiento.
+
+`src/pages/[lang]/checklist-ausencias.astro` es una checklist de reglas
+(sin IA, sin backend) sobre ausencias largas de Suiza y su impacto en el
+permiso de residencia y con el empleador.
+
+**Idiomas de las 3 herramientas**: solo `en`/`de`/`it`/`fr` — el inglés y
+los 3 idiomas oficiales de Suiza. Nunca español, que no es idioma suizo
+(las guías de contenido sí siguen en los 6 idiomas, incluido español, para
+gente que planea mudarse y busca información en su idioma antes de llegar).
 
 ## Próximos pasos sugeridos
 
