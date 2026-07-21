@@ -3,12 +3,9 @@ import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const todasLasGuias = await getCollection('guias-universales');
+  const todasLasGuias = await getCollection('por-pais');
   return todasLasGuias.map((guia) => {
     const [lang, slug] = guia.slug.split('/');
-    // Idiomas en los que existe esta misma guía (mismo slug), para no
-    // ofrecer en el selector de idioma un enlace a una traducción que
-    // todavía no existe.
     const availableLangs = todasLasGuias
       .filter((g) => g.slug.split('/')[1] === slug)
       .map((g) => g.slug.split('/')[0]);
@@ -24,21 +21,24 @@ const { lang } = Astro.params;
 const { Content } = await guia.render();
 
 const backLabels: Record<string, string> = {
-  es: '← Todas las guías',
-  de: '← Alle Leitfäden',
-  en: '← All guides',
-  fr: '← Tous les guides',
-  it: '← Tutte le guide',
-  pt: '← Todos os guias',
+  es: '← Todas las guías por país',
+  en: '← All country guides',
+};
+
+const categoryLabels: Record<string, Record<string, string>> = {
+  'ue-efta': { es: 'Ciudadanía UE/EFTA', en: 'EU/EFTA citizenship' },
+  'tercer-pais': { es: 'Tercer país', en: 'Third country' },
 };
 ---
 <Layout title={guia.data.titulo} lang={lang} availableLangs={availableLangs} description={guia.data.resumen}>
   <div class="container">
-    <a class="back-link" href={`/${lang}/`}>{backLabels[lang] || backLabels.es}</a>
+    <a class="back-link" href={`/${lang}/por-pais`}>{backLabels[lang] || backLabels.es}</a>
     <article>
+      <p class="eyebrow">{categoryLabels[guia.data.categoriaMigratoria]?.[lang] || guia.data.categoriaMigratoria}</p>
       <h1>{guia.data.titulo}</h1>
       <p class="meta-row">
         {guia.data.minutosLectura} min · {guia.data.fechaActualizacion.toLocaleDateString(lang)}
+        · {guia.data.paisesCubiertos.join(', ')}
       </p>
       <Content />
     </article>

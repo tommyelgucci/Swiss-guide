@@ -32,3 +32,10 @@ Cada cantón fija sus propias tasas y baremos, así que la misma nómina puede
 generar una retención distinta según dónde vivas, no solo según dónde
 trabajes. Esto genera sorpresas frecuentes al cambiar de cantón de
 residencia sin cambiar de trabajo.
+
+## Calcula tu caso
+
+Usa la [calculadora de impuestos por cantón](/es/tax-calculator) para
+comparar cuánto te quedaría neto según tu cantón, edad y situación
+familiar, e incluye una estimación de cuánto recuperarías aportando al
+Tercer Pilar.

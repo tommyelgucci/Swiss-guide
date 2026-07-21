@@ -35,3 +35,10 @@ Jeder Kanton legt seine eigenen Sätze und Tarife fest, sodass derselbe
 Lohn je nach Wohnort eine andere Quellensteuer erzeugen kann, nicht nur
 je nach Arbeitsort. Das führt zu häufigen Überraschungen beim Wechsel
 des Wohnkantons ohne Arbeitgeberwechsel.
+
+## Berechne deinen Fall
+
+Nutze den [Steuerrechner nach Kanton](/de/tax-calculator), um zu
+vergleichen, wie viel dir je nach Kanton, Alter und Familiensituation
+netto bleibt — inklusive einer Schätzung, wie viel du mit Einzahlungen
+in die Säule 3a zurückbekommen könntest.

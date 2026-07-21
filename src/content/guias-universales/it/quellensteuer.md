@@ -32,3 +32,10 @@ Ogni cantone stabilisce le proprie aliquote e scaglioni, quindi lo
 stesso stipendio può generare una ritenuta diversa a seconda di dove
 vivi, non solo di dove lavori. Questo genera frequenti sorprese quando
 si cambia cantone di residenza senza cambiare lavoro.
+
+## Calcola il tuo caso
+
+Usa il [calcolatore delle imposte per cantone](/it/tax-calculator) per
+confrontare quanto ti resterebbe netto in base a cantone, età e
+situazione familiare, con una stima di quanto potresti recuperare
+versando al terzo pilastro.

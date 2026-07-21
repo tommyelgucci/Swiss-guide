@@ -1,0 +1,766 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { CANTONS, PILLAR_3A_MAX_2026 } from '../../lib/taxCalculator.js';
+
+export function getStaticPaths() {
+  const idiomas = ['es', 'de', 'en', 'fr', 'it', 'pt'];
+  return idiomas.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+const t = {
+  es: {
+    pageTitle: 'Calculadora de impuestos en Suiza 2026',
+    backHome: '← Volver al inicio',
+    heading: 'Calculadora de impuestos en Suiza: tu sueldo neto por cantón',
+    intro: 'Indica tu situación y compara cuánto te queda neto en los 26 cantones. Estimación orientativa basada en tarifas medias — no sustituye el cálculo oficial de tu cantón.',
+    quickAnswer: 'Carga fiscal efectiva aproximada para un soltero con permiso B: Zug ~12%, Zúrich ~20%, Berna ~24%, Ginebra ~28%. Las tres capas (federal + cantonal + comunal) se acumulan.',
+    grossLabel: 'Tu salario bruto mensual (CHF)',
+    ageLabel: 'Edad',
+    maritalLabel: 'Estado civil',
+    maritalOptions: [
+      { value: 'soltero', label: 'Soltero/a' },
+      { value: 'casado-1', label: 'Casado/a, un solo sueldo' },
+      { value: 'casado-2', label: 'Casado/a, dos sueldos' },
+      { value: 'monoparental', label: 'Familia monoparental' },
+    ],
+    kidsLabel: 'Hijos a cargo',
+    month13Label: '13º sueldo',
+    yes: 'Sí',
+    no: 'No',
+    churchLabel: 'Impuesto eclesiástico',
+    cantonListHeading: 'Los 26 cantones',
+    searchPlaceholder: 'Busca tu cantón…',
+    detailHeading: 'Desglose detallado',
+    grossRow: 'Salario bruto (anual)',
+    ahvRow: 'AHV/IV/EO (1er pilar)',
+    bvgRow: 'BVG / 2º pilar',
+    alvRow: 'ALV + NBU (paro + accidente)',
+    taxRow: 'Impuestos (federal + cantonal + comunal)',
+    netRow: 'Neto estimado',
+    netAnnualLabel: 'al año',
+    perMonth: '/ mes',
+    pillarHeading: '¿Cuánto ahorrarías con el Tercer Pilar?',
+    pillarIntro: `Mueve la barra para ver cuánto podrías recuperar en la declaración (máximo legal 2026: ${PILLAR_3A_MAX_2026.toLocaleString('es-CH')} CHF/año).`,
+    pillarContribution: 'Aportación anual',
+    pillarSavings: 'Recuperarías al año',
+    howHeading: 'Cómo funciona el sistema fiscal en Suiza',
+    howCards: [
+      { title: 'Permisos B, L o G', text: 'Tu empresa retiene los impuestos cada mes de la nómina (Quellensteuer), según una tarifa que depende del cantón y tu situación familiar. Por defecto no presentas declaración.' },
+      { title: 'Permiso C o nacionalidad suiza', text: 'Presentas declaración anual: federal (hasta 11,5%), cantonal progresivo y comunal. Puedes deducir 3er pilar, seguro médico, transporte y gastos profesionales.' },
+      { title: 'Tu comuna importa', text: 'Dentro del mismo cantón, dos comunas pueden variar ±15% por el multiplicador municipal. Esta calculadora usa el promedio de la capital cantonal.' },
+      { title: 'Deducción pilar 3a', text: `Hasta ${PILLAR_3A_MAX_2026.toLocaleString('es-CH')} CHF/año reduce tu base imponible y puede devolverte varios miles de CHF según tu tipo marginal.` },
+    ],
+    quellensteuerHeading: 'Quellensteuer vs. declaración ordinaria',
+    quellensteuerText: 'Si estás en Quellensteuer (permiso B/L/G, sueldo ≤120\'000 CHF/año), también te conviene pedir Tarifkorrektur (corrección de tarifa) antes del 31 de marzo del año siguiente si aportas al 3er pilar, tienes gastos profesionales altos, pensión alimenticia o hipoteca — en esos casos sueles recuperar dinero.',
+    tableHeading: 'Cantones más baratos y más caros (referencia)',
+    tableIntro: 'Carga fiscal efectiva estimada a 100\'000 CHF/año, soltero sin hijos, capital cantonal.',
+    leversHeading: 'Cómo pagar menos impuestos — 4 palancas legales',
+    levers: [
+      { title: '1. Aporta al Tercer Pilar (3a)', text: 'La palanca más potente: reduce tu base imponible directamente. Lo recuperas vía Tarifkorrektur o en la declaración.' },
+      { title: '2. Deduce tus gastos profesionales reales', text: 'Transporte al trabajo, comidas fuera de casa, formación. En Quellensteuer, pide Tarifkorrektur si tus gastos superan la deducción fija.' },
+      { title: '3. Revisa tu tarifa Quellensteuer', text: 'Muchos recién llegados quedan con tarifa de soltero aunque se casaron o tuvieron hijos, porque la empresa no lo actualizó. Corregirlo puede suponer miles de CHF al año.' },
+      { title: '4. Considera dónde te empadronas', text: 'El cantón/comuna donde vives (no donde trabajas) determina tu factura. Solo tiene sentido si es tu residencia habitual real, no un simple apartado postal.' },
+    ],
+    faqHeading: 'Preguntas frecuentes',
+    faq: [
+      { q: '¿Cuánto se paga de impuestos en Suiza?', a: 'No hay un único impuesto: se suman impuesto federal (progresivo, máximo 11,5%), cantonal (varía mucho entre cantones) y comunal (multiplicador sobre el cantonal). Para un sueldo medio, la parte federal suele ser solo 1-4% del bruto.' },
+      { q: '¿Cómo puedo pagar menos impuestos legalmente?', a: 'La forma más habitual es aportar al pilar 3a (hasta el máximo legal anual). Si estás en Quellensteuer, puedes pedir Tarifkorrektur para que se consideren tus deducciones reales.' },
+      { q: '¿Pagan menos los matrimonios?', a: 'Sí, por tarifa más favorable en Quellensteuer (B/C vs A) y por splitting en declaración ordinaria — aunque con dos sueldos altos el efecto es menor.' },
+      { q: '¿Y el impuesto eclesiástico?', a: 'Si estás registrado como miembro de una iglesia reconocida, pagas un recargo (aprox. 8-12%) sobre tu impuesto cantonal y comunal. Puedes darte de baja en la oficina de tu comuna.' },
+    ],
+    disclaimer: 'Esta calculadora ofrece una estimación orientativa a partir de tasas medias por cantón — no es asesoría fiscal ni reemplaza el cálculo oficial. El resultado real depende de tu comuna, deducciones específicas y situación exacta. Simulador oficial:',
+    sourceLink: 'estv.admin.ch',
+  },
+  de: {
+    pageTitle: 'Steuerrechner Schweiz 2026',
+    backHome: '← Zur Startseite',
+    heading: 'Steuerrechner Schweiz: dein Nettolohn nach Kanton',
+    intro: 'Gib deine Situation ein und vergleiche, wie viel dir in allen 26 Kantonen netto bleibt. Orientierungswert auf Basis von Durchschnittssätzen — ersetzt nicht die offizielle Berechnung deines Kantons.',
+    quickAnswer: 'Ungefähre effektive Steuerbelastung für Ledige mit Bewilligung B: Zug ~12%, Zürich ~20%, Bern ~24%, Genf ~28%. Die drei Ebenen (Bund + Kanton + Gemeinde) addieren sich.',
+    grossLabel: 'Dein monatlicher Bruttolohn (CHF)',
+    ageLabel: 'Alter',
+    maritalLabel: 'Zivilstand',
+    maritalOptions: [
+      { value: 'soltero', label: 'Ledig' },
+      { value: 'casado-1', label: 'Verheiratet, ein Einkommen' },
+      { value: 'casado-2', label: 'Verheiratet, zwei Einkommen' },
+      { value: 'monoparental', label: 'Alleinerziehend' },
+    ],
+    kidsLabel: 'Unterhaltspflichtige Kinder',
+    month13Label: '13. Monatslohn',
+    yes: 'Ja',
+    no: 'Nein',
+    churchLabel: 'Kirchensteuer',
+    cantonListHeading: 'Alle 26 Kantone',
+    searchPlaceholder: 'Kanton suchen…',
+    detailHeading: 'Detaillierte Aufschlüsselung',
+    grossRow: 'Bruttolohn (jährlich)',
+    ahvRow: 'AHV/IV/EO (1. Säule)',
+    bvgRow: 'BVG / 2. Säule',
+    alvRow: 'ALV + NBU (Arbeitslosigkeit + Unfall)',
+    taxRow: 'Steuern (Bund + Kanton + Gemeinde)',
+    netRow: 'Geschätzter Nettolohn',
+    netAnnualLabel: 'pro Jahr',
+    perMonth: '/ Monat',
+    pillarHeading: 'Wie viel sparst du mit der Säule 3a?',
+    pillarIntro: `Bewege den Regler, um zu sehen, wie viel du bei der Steuererklärung zurückbekommen könntest (gesetzliches Maximum 2026: ${PILLAR_3A_MAX_2026.toLocaleString('de-CH')} CHF/Jahr).`,
+    pillarContribution: 'Jährlicher Beitrag',
+    pillarSavings: 'Du bekämst pro Jahr zurück',
+    howHeading: 'Wie das Schweizer Steuersystem funktioniert',
+    howCards: [
+      { title: 'Bewilligung B, L oder G', text: 'Dein Arbeitgeber zieht die Steuern monatlich direkt vom Lohn ab (Quellensteuer), nach einem Tarif abhängig von Kanton und Familiensituation. Normalerweise keine Steuererklärung nötig.' },
+      { title: 'Bewilligung C oder Schweizer Staatsangehörigkeit', text: 'Du reichst eine jährliche Steuererklärung ein: Bund (bis 11,5%), Kanton progressiv und Gemeinde. Abzugsfähig: Säule 3a, Krankenkasse, Arbeitsweg und Berufsauslagen.' },
+      { title: 'Deine Gemeinde zählt', text: 'Innerhalb desselben Kantons können zwei Gemeinden um ±15% variieren (Gemeindesteuerfuss). Dieser Rechner verwendet den Durchschnitt des Kantonshauptorts.' },
+      { title: 'Abzug Säule 3a', text: `Bis zu ${PILLAR_3A_MAX_2026.toLocaleString('de-CH')} CHF/Jahr reduzieren dein steuerbares Einkommen und können je nach Grenzsteuersatz mehrere Tausend CHF zurückbringen.` },
+    ],
+    quellensteuerHeading: 'Quellensteuer vs. ordentliche Veranlagung',
+    quellensteuerText: 'Bei der Quellensteuer (Bewilligung B/L/G, Lohn ≤120’000 CHF/Jahr) lohnt sich meist eine Tarifkorrektur bis 31. März des Folgejahres, wenn du in die Säule 3a einzahlst, hohe Berufsauslagen, Unterhaltszahlungen oder eine Hypothek hast — dann bekommst du oft Geld zurück.',
+    tableHeading: 'Günstigste und teuerste Kantone (Referenz)',
+    tableIntro: 'Geschätzte effektive Steuerbelastung bei 100’000 CHF/Jahr, ledig ohne Kinder, Kantonshauptort.',
+    leversHeading: 'Wie du legal weniger Steuern zahlst — 4 Hebel',
+    levers: [
+      { title: '1. Zahle in die Säule 3a ein', text: 'Der stärkste Hebel: reduziert dein steuerbares Einkommen direkt. Du bekommst es über eine Tarifkorrektur oder die Steuererklärung zurück.' },
+      { title: '2. Ziehe deine echten Berufsauslagen ab', text: 'Arbeitsweg, auswärtige Verpflegung, Weiterbildung. Bei der Quellensteuer: Tarifkorrektur beantragen, wenn deine Auslagen über der Pauschale liegen.' },
+      { title: '3. Überprüfe deinen Quellensteuertarif', text: 'Viele Neuankömmlinge bleiben auf dem Ledigen-Tarif, obwohl sie geheiratet oder Kinder bekommen haben — der Arbeitgeber hat es nicht aktualisiert. Eine Korrektur kann Tausende CHF im Jahr ausmachen.' },
+      { title: '4. Überlege deinen Wohnsitz', text: 'Der Kanton/die Gemeinde, in der du wohnst (nicht arbeitest), bestimmt deine Rechnung. Nur sinnvoll, wenn es dein tatsächlicher gewöhnlicher Wohnsitz ist, kein Briefkasten.' },
+    ],
+    faqHeading: 'Häufige Fragen',
+    faq: [
+      { q: 'Wie viel Steuern zahlt man in der Schweiz?', a: 'Es gibt keine einzelne Steuer: Bundessteuer (progressiv, max. 11,5%), Kantonssteuer (stark unterschiedlich) und Gemeindesteuer (Zuschlag auf die Kantonssteuer) addieren sich. Bei einem mittleren Lohn macht der Bundesanteil oft nur 1-4% des Bruttolohns aus.' },
+      { q: 'Wie kann ich legal weniger Steuern zahlen?', a: 'Am häufigsten über die Säule 3a (bis zum gesetzlichen Jahresmaximum). Bei der Quellensteuer kannst du eine Tarifkorrektur beantragen, damit deine tatsächlichen Abzüge berücksichtigt werden.' },
+      { q: 'Zahlen Ehepaare weniger?', a: 'Ja, durch einen günstigeren Quellensteuertarif (B/C statt A) und durch Splitting in der ordentlichen Veranlagung — bei zwei hohen Einkommen ist der Effekt jedoch geringer.' },
+      { q: 'Und die Kirchensteuer?', a: 'Wenn du als Mitglied einer anerkannten Landeskirche registriert bist, zahlst du einen Zuschlag (ca. 8-12%) auf deine Kantons- und Gemeindesteuer. Du kannst dich beim Gemeindeamt austreten lassen.' },
+    ],
+    disclaimer: 'Dieser Rechner liefert eine Orientierungsschätzung auf Basis kantonaler Durchschnittssätze — keine Steuerberatung und kein Ersatz für die offizielle Berechnung. Das tatsächliche Ergebnis hängt von deiner Gemeinde, spezifischen Abzügen und deiner genauen Situation ab. Offizieller Simulator:',
+    sourceLink: 'estv.admin.ch',
+  },
+  en: {
+    pageTitle: 'Switzerland tax calculator 2026',
+    backHome: '← Back to home',
+    heading: 'Switzerland tax calculator: your net salary by canton',
+    intro: "Enter your situation and compare what you'd take home net across all 26 cantons. A ballpark estimate based on average rates — it doesn't replace your canton's official calculation.",
+    quickAnswer: 'Approximate effective tax burden for a single person on a B permit: Zug ~12%, Zurich ~20%, Bern ~24%, Geneva ~28%. All three layers (federal + cantonal + communal) stack.',
+    grossLabel: 'Your gross monthly salary (CHF)',
+    ageLabel: 'Age',
+    maritalLabel: 'Marital status',
+    maritalOptions: [
+      { value: 'soltero', label: 'Single' },
+      { value: 'casado-1', label: 'Married, one income' },
+      { value: 'casado-2', label: 'Married, two incomes' },
+      { value: 'monoparental', label: 'Single parent' },
+    ],
+    kidsLabel: 'Dependent children',
+    month13Label: '13th-month salary',
+    yes: 'Yes',
+    no: 'No',
+    churchLabel: 'Church tax',
+    cantonListHeading: 'All 26 cantons',
+    searchPlaceholder: 'Search your canton…',
+    detailHeading: 'Detailed breakdown',
+    grossRow: 'Gross salary (annual)',
+    ahvRow: 'AHV/IV/EO (1st pillar)',
+    bvgRow: 'BVG / 2nd pillar',
+    alvRow: 'ALV + NBU (unemployment + accident)',
+    taxRow: 'Taxes (federal + cantonal + communal)',
+    netRow: 'Estimated net',
+    netAnnualLabel: 'per year',
+    perMonth: '/ month',
+    pillarHeading: 'How much would you save with the 3rd pillar?',
+    pillarIntro: `Move the slider to see how much you could get back at tax time (2026 legal maximum: CHF ${PILLAR_3A_MAX_2026.toLocaleString('en-CH')}/year).`,
+    pillarContribution: 'Annual contribution',
+    pillarSavings: "You'd get back per year",
+    howHeading: 'How the Swiss tax system works',
+    howCards: [
+      { title: 'Permit B, L or G', text: "Your employer withholds tax from your payroll every month (Quellensteuer), using a rate that depends on your canton and family situation. You normally don't file a return." },
+      { title: 'Permit C or Swiss citizenship', text: 'You file an annual tax return: federal (up to 11.5%), progressive cantonal, and communal. You can deduct pillar 3a, health insurance, commuting and work expenses.' },
+      { title: 'Your municipality matters', text: 'Within the same canton, two municipalities can vary by ±15% due to the local multiplier. This calculator uses the cantonal capital average.' },
+      { title: 'Pillar 3a deduction', text: `Up to CHF ${PILLAR_3A_MAX_2026.toLocaleString('en-CH')}/year reduces your taxable income and can return several thousand CHF depending on your marginal rate.` },
+    ],
+    quellensteuerHeading: 'Withholding tax vs. ordinary assessment',
+    quellensteuerText: "If you're on Quellensteuer (permit B/L/G, salary ≤ CHF 120,000/year), it's usually worth requesting a Tarifkorrektur (rate correction) before March 31 of the following year if you contribute to pillar 3a, have high work expenses, pay alimony, or have a mortgage — in those cases you usually get money back.",
+    tableHeading: 'Cheapest and most expensive cantons (reference)',
+    tableIntro: 'Estimated effective tax burden at CHF 100,000/year, single with no children, cantonal capital.',
+    leversHeading: 'How to legally pay less tax — 4 levers',
+    levers: [
+      { title: '1. Contribute to the 3rd pillar (3a)', text: 'The most powerful lever: it directly reduces your taxable income. You get it back via a Tarifkorrektur or on your tax return.' },
+      { title: '2. Deduct your real work expenses', text: 'Commuting, meals away from home, training. On Quellensteuer, request a Tarifkorrektur if your expenses exceed the flat deduction.' },
+      { title: '3. Check your Quellensteuer rate', text: "Many newcomers stay on the single rate even after marrying or having kids, because the employer never updated it. Fixing it can mean thousands of CHF a year." },
+      { title: '4. Consider where you register as resident', text: "The canton/municipality where you actually live (not work) determines your bill. Only makes sense if it's your genuine habitual residence, not just a mailbox." },
+    ],
+    faqHeading: 'Frequently asked questions',
+    faq: [
+      { q: 'How much tax do you pay in Switzerland?', a: "There isn't a single tax: federal tax (progressive, max 11.5%), cantonal tax (varies a lot) and communal tax (a multiplier on top of cantonal) all add up. For an average salary, the federal share is usually just 1-4% of gross." },
+      { q: 'How can I legally pay less tax?', a: "The most common way is contributing to pillar 3a (up to the annual legal maximum). If you're on Quellensteuer, you can request a Tarifkorrektur so your real deductions are taken into account." },
+      { q: 'Do married couples pay less?', a: 'Yes, through a more favourable Quellensteuer rate (B/C vs A) and through splitting under ordinary assessment — though with two high incomes the effect is smaller.' },
+      { q: 'What about church tax?', a: "If you're registered as a member of a recognized church, you pay a surcharge (roughly 8-12%) on your cantonal and communal tax. You can deregister at your municipal office." },
+    ],
+    disclaimer: "This calculator gives a ballpark estimate based on average cantonal rates — it isn't tax advice and doesn't replace the official calculation. The real result depends on your municipality, specific deductions and exact situation. Official simulator:",
+    sourceLink: 'estv.admin.ch',
+  },
+  fr: {
+    pageTitle: 'Calculateur d\'impôts Suisse 2026',
+    backHome: '← Retour à l\'accueil',
+    heading: 'Calculateur d\'impôts en Suisse : votre salaire net par canton',
+    intro: 'Indiquez votre situation et comparez ce qu\'il vous reste net dans les 26 cantons. Estimation indicative basée sur des taux moyens — ne remplace pas le calcul officiel de votre canton.',
+    quickAnswer: 'Charge fiscale effective approximative pour une personne seule avec permis B : Zoug ~12%, Zurich ~20%, Berne ~24%, Genève ~28%. Les trois niveaux (fédéral + cantonal + communal) s\'additionnent.',
+    grossLabel: 'Votre salaire mensuel brut (CHF)',
+    ageLabel: 'Âge',
+    maritalLabel: 'État civil',
+    maritalOptions: [
+      { value: 'soltero', label: 'Célibataire' },
+      { value: 'casado-1', label: 'Marié(e), un seul revenu' },
+      { value: 'casado-2', label: 'Marié(e), deux revenus' },
+      { value: 'monoparental', label: 'Famille monoparentale' },
+    ],
+    kidsLabel: 'Enfants à charge',
+    month13Label: '13e salaire',
+    yes: 'Oui',
+    no: 'Non',
+    churchLabel: 'Impôt ecclésiastique',
+    cantonListHeading: 'Les 26 cantons',
+    searchPlaceholder: 'Cherchez votre canton…',
+    detailHeading: 'Détail du calcul',
+    grossRow: 'Salaire brut (annuel)',
+    ahvRow: 'AVS/AI/APG (1er pilier)',
+    bvgRow: 'LPP / 2e pilier',
+    alvRow: 'AC + AANP (chômage + accident)',
+    taxRow: 'Impôts (fédéral + cantonal + communal)',
+    netRow: 'Net estimé',
+    netAnnualLabel: 'par an',
+    perMonth: '/ mois',
+    pillarHeading: 'Combien économiseriez-vous avec le 3e pilier ?',
+    pillarIntro: `Déplacez le curseur pour voir combien vous pourriez récupérer à la déclaration (maximum légal 2026 : ${PILLAR_3A_MAX_2026.toLocaleString('fr-CH')} CHF/an).`,
+    pillarContribution: 'Versement annuel',
+    pillarSavings: 'Vous récupéreriez par an',
+    howHeading: 'Comment fonctionne le système fiscal suisse',
+    howCards: [
+      { title: 'Permis B, L ou G', text: 'Votre employeur retient l\'impôt chaque mois sur votre salaire (impôt à la source), selon un barème dépendant du canton et de votre situation familiale. Vous ne remplissez normalement pas de déclaration.' },
+      { title: 'Permis C ou nationalité suisse', text: 'Vous remplissez une déclaration annuelle : fédéral (jusqu\'à 11,5%), cantonal progressif et communal. Déductible : 3e pilier, assurance maladie, trajets et frais professionnels.' },
+      { title: 'Votre commune compte', text: 'Au sein d\'un même canton, deux communes peuvent varier de ±15% selon le multiplicateur communal. Ce calculateur utilise la moyenne du chef-lieu cantonal.' },
+      { title: 'Déduction pilier 3a', text: `Jusqu\'à ${PILLAR_3A_MAX_2026.toLocaleString('fr-CH')} CHF/an réduisent votre revenu imposable et peuvent vous faire récupérer plusieurs milliers de CHF selon votre taux marginal.` },
+    ],
+    quellensteuerHeading: 'Impôt à la source vs. taxation ordinaire',
+    quellensteuerText: 'Si vous êtes imposé à la source (permis B/L/G, salaire ≤120\'000 CHF/an), il est souvent intéressant de demander une correction de barème (Tarifkorrektur) avant le 31 mars de l\'année suivante si vous cotisez au 3e pilier, avez des frais professionnels élevés, une pension alimentaire ou une hypothèque — vous récupérez alors souvent de l\'argent.',
+    tableHeading: 'Cantons les moins et les plus chers (référence)',
+    tableIntro: 'Charge fiscale effective estimée à 100\'000 CHF/an, célibataire sans enfant, chef-lieu cantonal.',
+    leversHeading: 'Comment payer moins d\'impôts — 4 leviers légaux',
+    levers: [
+      { title: '1. Versez au 3e pilier (3a)', text: 'Le levier le plus puissant : réduit directement votre revenu imposable. Vous le récupérez via une correction de barème ou à la déclaration.' },
+      { title: '2. Déduisez vos frais professionnels réels', text: 'Trajets, repas hors domicile, formation. À la source, demandez une correction de barème si vos frais dépassent la déduction forfaitaire.' },
+      { title: '3. Vérifiez votre barème d\'impôt à la source', text: 'Beaucoup de nouveaux arrivants restent au barème célibataire même après s\'être mariés ou avoir eu des enfants, car l\'employeur ne l\'a pas mis à jour. Le corriger peut représenter des milliers de CHF par an.' },
+      { title: '4. Réfléchissez à votre domicile', text: 'Le canton/la commune où vous vivez réellement (pas où vous travaillez) détermine votre facture. Cela n\'a de sens que si c\'est votre résidence habituelle réelle, pas une simple boîte aux lettres.' },
+    ],
+    faqHeading: 'Questions fréquentes',
+    faq: [
+      { q: 'Combien paie-t-on d\'impôts en Suisse ?', a: 'Il n\'y a pas un seul impôt : impôt fédéral (progressif, max 11,5%), cantonal (très variable) et communal (multiplicateur sur le cantonal) s\'additionnent. Pour un salaire moyen, la part fédérale ne représente souvent que 1-4% du brut.' },
+      { q: 'Comment payer légalement moins d\'impôts ?', a: 'Le plus courant est de cotiser au pilier 3a (jusqu\'au maximum légal annuel). Si vous êtes à la source, vous pouvez demander une correction de barème pour que vos déductions réelles soient prises en compte.' },
+      { q: 'Les couples mariés paient-ils moins ?', a: 'Oui, via un barème à la source plus favorable (B/C vs A) et via le splitting en taxation ordinaire — bien que l\'effet soit plus faible avec deux revenus élevés.' },
+      { q: 'Et l\'impôt ecclésiastique ?', a: 'Si vous êtes inscrit comme membre d\'une église reconnue, vous payez un supplément (environ 8-12%) sur votre impôt cantonal et communal. Vous pouvez vous désinscrire auprès de votre commune.' },
+    ],
+    disclaimer: 'Ce calculateur donne une estimation indicative basée sur des taux cantonaux moyens — ce n\'est pas un conseil fiscal et cela ne remplace pas le calcul officiel. Le résultat réel dépend de votre commune, de déductions spécifiques et de votre situation exacte. Simulateur officiel :',
+    sourceLink: 'estv.admin.ch',
+  },
+  it: {
+    pageTitle: 'Calcolatore delle imposte in Svizzera 2026',
+    backHome: '← Torna alla home',
+    heading: 'Calcolatore delle imposte in Svizzera: il tuo netto per cantone',
+    intro: 'Indica la tua situazione e confronta quanto ti resterebbe netto nei 26 cantoni. Stima indicativa basata su aliquote medie — non sostituisce il calcolo ufficiale del tuo cantone.',
+    quickAnswer: 'Onere fiscale effettivo approssimativo per un single con permesso B: Zugo ~12%, Zurigo ~20%, Berna ~24%, Ginevra ~28%. I tre livelli (federale + cantonale + comunale) si sommano.',
+    grossLabel: 'Il tuo stipendio lordo mensile (CHF)',
+    ageLabel: 'Età',
+    maritalLabel: 'Stato civile',
+    maritalOptions: [
+      { value: 'soltero', label: 'Celibe/nubile' },
+      { value: 'casado-1', label: 'Sposato/a, un solo reddito' },
+      { value: 'casado-2', label: 'Sposato/a, due redditi' },
+      { value: 'monoparental', label: 'Famiglia monoparentale' },
+    ],
+    kidsLabel: 'Figli a carico',
+    month13Label: '13ª mensilità',
+    yes: 'Sì',
+    no: 'No',
+    churchLabel: 'Imposta ecclesiastica',
+    cantonListHeading: 'Tutti i 26 cantoni',
+    searchPlaceholder: 'Cerca il tuo cantone…',
+    detailHeading: 'Dettaglio del calcolo',
+    grossRow: 'Stipendio lordo (annuo)',
+    ahvRow: 'AVS/AI/IPG (1° pilastro)',
+    bvgRow: 'LPP / 2° pilastro',
+    alvRow: 'AD + AINF (disoccupazione + infortuni)',
+    taxRow: 'Imposte (federale + cantonale + comunale)',
+    netRow: 'Netto stimato',
+    netAnnualLabel: 'all\'anno',
+    perMonth: '/ mese',
+    pillarHeading: 'Quanto risparmieresti con il terzo pilastro?',
+    pillarIntro: `Sposta il cursore per vedere quanto potresti recuperare con la dichiarazione (massimo legale 2026: ${PILLAR_3A_MAX_2026.toLocaleString('it-CH')} CHF/anno).`,
+    pillarContribution: 'Versamento annuo',
+    pillarSavings: 'Recupereresti all\'anno',
+    howHeading: 'Come funziona il sistema fiscale svizzero',
+    howCards: [
+      { title: 'Permesso B, L o G', text: 'Il tuo datore di lavoro trattiene le imposte ogni mese dalla busta paga (imposta alla fonte), secondo una tariffa che dipende dal cantone e dalla tua situazione familiare. Normalmente non presenti dichiarazione.' },
+      { title: 'Permesso C o cittadinanza svizzera', text: 'Presenti una dichiarazione annuale: federale (fino all\'11,5%), cantonale progressiva e comunale. Puoi dedurre terzo pilastro, cassa malati, trasporti e spese professionali.' },
+      { title: 'Il tuo comune conta', text: 'All\'interno dello stesso cantone, due comuni possono variare del ±15% per il moltiplicatore comunale. Questo calcolatore usa la media del capoluogo cantonale.' },
+      { title: 'Deduzione pilastro 3a', text: `Fino a ${PILLAR_3A_MAX_2026.toLocaleString('it-CH')} CHF/anno riducono il tuo reddito imponibile e possono restituirti diverse migliaia di CHF a seconda della tua aliquota marginale.` },
+    ],
+    quellensteuerHeading: 'Imposta alla fonte vs. tassazione ordinaria',
+    quellensteuerText: 'Se sei tassato alla fonte (permesso B/L/G, stipendio ≤120\'000 CHF/anno), conviene spesso chiedere una Tarifkorrektur (correzione di tariffa) entro il 31 marzo dell\'anno successivo se versi al terzo pilastro, hai spese professionali elevate, alimenti o un mutuo — in quei casi di solito recuperi denaro.',
+    tableHeading: 'Cantoni più economici e più cari (riferimento)',
+    tableIntro: 'Onere fiscale effettivo stimato a 100\'000 CHF/anno, single senza figli, capoluogo cantonale.',
+    leversHeading: 'Come pagare meno imposte — 4 leve legali',
+    levers: [
+      { title: '1. Versa al terzo pilastro (3a)', text: 'La leva più potente: riduce direttamente il tuo reddito imponibile. Lo recuperi tramite Tarifkorrektur o con la dichiarazione.' },
+      { title: '2. Deduci le tue spese professionali reali', text: 'Trasporti, pasti fuori casa, formazione. Con l\'imposta alla fonte, chiedi la Tarifkorrektur se le tue spese superano la deduzione forfettaria.' },
+      { title: '3. Controlla la tua tariffa d\'imposta alla fonte', text: 'Molti neoarrivati restano con la tariffa da single anche dopo essersi sposati o aver avuto figli, perché il datore di lavoro non l\'ha aggiornata. Correggerla può significare migliaia di CHF all\'anno.' },
+      { title: '4. Valuta dove ti registri come residente', text: 'Il cantone/comune dove vivi davvero (non dove lavori) determina il conto. Ha senso solo se è la tua residenza abituale reale, non una semplice casella postale.' },
+    ],
+    faqHeading: 'Domande frequenti',
+    faq: [
+      { q: 'Quante imposte si pagano in Svizzera?', a: 'Non esiste un\'unica imposta: si sommano imposta federale (progressiva, max 11,5%), cantonale (molto variabile) e comunale (moltiplicatore sulla cantonale). Per uno stipendio medio, la parte federale è spesso solo l\'1-4% del lordo.' },
+      { q: 'Come posso pagare legalmente meno imposte?', a: 'Il modo più comune è versare al pilastro 3a (fino al massimo legale annuo). Se sei tassato alla fonte, puoi chiedere una Tarifkorrektur per far considerare le tue deduzioni reali.' },
+      { q: 'Le coppie sposate pagano meno?', a: 'Sì, grazie a una tariffa alla fonte più favorevole (B/C vs A) e allo splitting nella tassazione ordinaria — anche se con due redditi alti l\'effetto è minore.' },
+      { q: 'E l\'imposta ecclesiastica?', a: 'Se sei registrato come membro di una chiesa riconosciuta, paghi una maggiorazione (circa 8-12%) sulla tua imposta cantonale e comunale. Puoi cancellarti presso l\'ufficio del tuo comune.' },
+    ],
+    disclaimer: 'Questo calcolatore fornisce una stima indicativa basata su aliquote cantonali medie — non è consulenza fiscale e non sostituisce il calcolo ufficiale. Il risultato reale dipende dal tuo comune, dalle deduzioni specifiche e dalla tua situazione esatta. Simulatore ufficiale:',
+    sourceLink: 'estv.admin.ch',
+  },
+  pt: {
+    pageTitle: 'Calculadora de impostos na Suíça 2026',
+    backHome: '← Voltar ao início',
+    heading: 'Calculadora de impostos na Suíça: seu salário líquido por cantão',
+    intro: 'Informe sua situação e compare quanto sobraria líquido nos 26 cantões. Estimativa orientativa baseada em taxas médias — não substitui o cálculo oficial do seu cantão.',
+    quickAnswer: 'Carga tributária efetiva aproximada para solteiro com permiso B: Zug ~12%, Zurique ~20%, Berna ~24%, Genebra ~28%. As três camadas (federal + cantonal + municipal) se somam.',
+    grossLabel: 'Seu salário bruto mensal (CHF)',
+    ageLabel: 'Idade',
+    maritalLabel: 'Estado civil',
+    maritalOptions: [
+      { value: 'soltero', label: 'Solteiro(a)' },
+      { value: 'casado-1', label: 'Casado(a), uma renda' },
+      { value: 'casado-2', label: 'Casado(a), duas rendas' },
+      { value: 'monoparental', label: 'Família monoparental' },
+    ],
+    kidsLabel: 'Filhos dependentes',
+    month13Label: '13º salário',
+    yes: 'Sim',
+    no: 'Não',
+    churchLabel: 'Imposto eclesiástico',
+    cantonListHeading: 'Os 26 cantões',
+    searchPlaceholder: 'Busque seu cantão…',
+    detailHeading: 'Detalhamento',
+    grossRow: 'Salário bruto (anual)',
+    ahvRow: 'AHV/IV/EO (1º pilar)',
+    bvgRow: 'BVG / 2º pilar',
+    alvRow: 'ALV + NBU (desemprego + acidente)',
+    taxRow: 'Impostos (federal + cantonal + municipal)',
+    netRow: 'Líquido estimado',
+    netAnnualLabel: 'por ano',
+    perMonth: '/ mês',
+    pillarHeading: 'Quanto você economizaria com o Terceiro Pilar?',
+    pillarIntro: `Mova a barra para ver quanto poderia recuperar na declaração (máximo legal 2026: ${PILLAR_3A_MAX_2026.toLocaleString('pt-CH')} CHF/ano).`,
+    pillarContribution: 'Contribuição anual',
+    pillarSavings: 'Você recuperaria por ano',
+    howHeading: 'Como funciona o sistema fiscal suíço',
+    howCards: [
+      { title: 'Permiso B, L ou G', text: 'Sua empresa retém os impostos todo mês diretamente da folha (Quellensteuer), segundo uma tarifa que depende do cantão e da sua situação familiar. Normalmente você não apresenta declaração.' },
+      { title: 'Permiso C ou nacionalidade suíça', text: 'Você apresenta declaração anual: federal (até 11,5%), cantonal progressivo e municipal. Pode deduzir terceiro pilar, seguro-saúde, transporte e despesas profissionais.' },
+      { title: 'Seu município importa', text: 'Dentro do mesmo cantão, dois municípios podem variar ±15% pelo multiplicador municipal. Esta calculadora usa a média da capital cantonal.' },
+      { title: 'Dedução do pilar 3a', text: `Até ${PILLAR_3A_MAX_2026.toLocaleString('pt-CH')} CHF/ano reduzem sua base tributável e podem devolver vários milhares de CHF dependendo da sua alíquota marginal.` },
+    ],
+    quellensteuerHeading: 'Quellensteuer vs. declaração ordinária',
+    quellensteuerText: 'Se você está na Quellensteuer (permiso B/L/G, salário ≤120.000 CHF/ano), geralmente vale pedir Tarifkorrektur (correção de tarifa) até 31 de março do ano seguinte se contribui ao terceiro pilar, tem despesas profissionais altas, pensão alimentícia ou hipoteca — nesses casos costuma recuperar dinheiro.',
+    tableHeading: 'Cantões mais baratos e mais caros (referência)',
+    tableIntro: 'Carga tributária efetiva estimada a 100.000 CHF/ano, solteiro sem filhos, capital cantonal.',
+    leversHeading: 'Como pagar menos impostos — 4 alavancas legais',
+    levers: [
+      { title: '1. Contribua para o Terceiro Pilar (3a)', text: 'A alavanca mais forte: reduz diretamente sua base tributável. Você recupera via Tarifkorrektur ou na declaração.' },
+      { title: '2. Deduza suas despesas profissionais reais', text: 'Transporte, refeições fora de casa, formação. Na Quellensteuer, peça Tarifkorrektur se suas despesas superarem a dedução fixa.' },
+      { title: '3. Revise sua tarifa Quellensteuer', text: 'Muitos recém-chegados ficam na tarifa de solteiro mesmo depois de casar ou ter filhos, porque a empresa não atualizou. Corrigir isso pode significar milhares de CHF por ano.' },
+      { title: '4. Considere onde você se registra como residente', text: 'O cantão/município onde você realmente mora (não onde trabalha) determina sua conta. Só faz sentido se for sua residência habitual real, não apenas uma caixa postal.' },
+    ],
+    faqHeading: 'Perguntas frequentes',
+    faq: [
+      { q: 'Quanto se paga de impostos na Suíça?', a: 'Não existe um único imposto: somam-se imposto federal (progressivo, máx. 11,5%), cantonal (varia muito) e municipal (multiplicador sobre o cantonal). Para um salário médio, a parte federal costuma ser só 1-4% do bruto.' },
+      { q: 'Como posso pagar menos impostos legalmente?', a: 'A forma mais comum é contribuir ao pilar 3a (até o máximo legal anual). Se você está na Quellensteuer, pode pedir Tarifkorrektur para que suas deduções reais sejam consideradas.' },
+      { q: 'Casais pagam menos?', a: 'Sim, por uma tarifa Quellensteuer mais favorável (B/C vs A) e pelo splitting na declaração ordinária — embora com duas rendas altas o efeito seja menor.' },
+      { q: 'E o imposto eclesiástico?', a: 'Se você está registrado como membro de uma igreja reconhecida, paga um adicional (cerca de 8-12%) sobre seu imposto cantonal e municipal. Pode se desvincular no escritório do seu município.' },
+    ],
+    disclaimer: 'Esta calculadora oferece uma estimativa orientativa com base em taxas médias por cantão — não é consultoria fiscal nem substitui o cálculo oficial. O resultado real depende do seu município, deduções específicas e situação exata. Simulador oficial:',
+    sourceLink: 'estv.admin.ch',
+  },
+}[lang];
+
+const cantonOptions = [...CANTONS].sort((a, b) => a.rate100k - b.rate100k);
+---
+<Layout title={t.pageTitle} lang={lang} description={t.intro}>
+  <div class="container">
+    <a class="back-link" href={`/${lang}/`}>{t.backHome}</a>
+    <h1>{t.heading}</h1>
+    <p>{t.intro}</p>
+    <p class="quick-answer"><strong>{t.quickAnswer}</strong></p>
+
+    <form id="tax-form" class="card">
+      <label>
+        {t.grossLabel}
+        <input type="range" id="gross" min="2500" max="20000" step="100" value="6000" />
+        <output id="gross-output" for="gross">6'000 CHF</output>
+      </label>
+
+      <label>
+        {t.maritalLabel}
+        <select id="marital">
+          {t.maritalOptions.map((opt) => <option value={opt.value}>{opt.label}</option>)}
+        </select>
+      </label>
+
+      <div class="field-row">
+        <label>
+          {t.ageLabel}
+          <input type="number" id="age" min="18" max="70" value="35" />
+        </label>
+        <label>
+          {t.kidsLabel}
+          <input type="number" id="kids" min="0" max="6" value="0" />
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="checkbox-label">
+          <input type="checkbox" id="month13" checked /> {t.month13Label}
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="church" /> {t.churchLabel}
+        </label>
+      </div>
+
+      <label>
+        {t.cantonListHeading}
+        <select id="canton">
+          {cantonOptions.map((c) => <option value={c.code}>{c.names[lang] || c.names.en}</option>)}
+        </select>
+      </label>
+    </form>
+
+    <section class="card" id="detail">
+      <h2>{t.detailHeading} — <span id="detail-canton"></span></h2>
+      <dl class="breakdown">
+        <div><dt>{t.grossRow}</dt><dd id="row-gross"></dd></div>
+        <div><dt>{t.ahvRow}</dt><dd id="row-ahv"></dd></div>
+        <div><dt>{t.bvgRow}</dt><dd id="row-bvg"></dd></div>
+        <div><dt>{t.alvRow}</dt><dd id="row-alv"></dd></div>
+        <div><dt>{t.taxRow}</dt><dd id="row-tax"></dd></div>
+        <div class="net-row"><dt>{t.netRow}</dt><dd id="row-net"></dd></div>
+      </dl>
+      <p class="net-annual"><span id="net-annual"></span> {t.netAnnualLabel}</p>
+    </section>
+
+    <section class="card">
+      <h2>{t.cantonListHeading}</h2>
+      <input type="search" id="canton-search" placeholder={t.searchPlaceholder} />
+      <ol id="canton-ranking" class="canton-ranking"></ol>
+    </section>
+
+    <section class="card">
+      <h2>{t.pillarHeading}</h2>
+      <p>{t.pillarIntro}</p>
+      <label>
+        {t.pillarContribution}
+        <input type="range" id="pillar3a" min="0" max={PILLAR_3A_MAX_2026} step="100" value="6000" />
+        <output id="pillar3a-output" for="pillar3a"></output>
+      </label>
+      <p class="pillar-savings">{t.pillarSavings}: <strong id="pillar-savings-amount"></strong></p>
+    </section>
+
+    <section>
+      <h2>{t.howHeading}</h2>
+      <div class="guide-grid">
+        {t.howCards.map((c) => (
+          <div class="card">
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>{t.quellensteuerHeading}</h2>
+      <p>{t.quellensteuerText}</p>
+    </section>
+
+    <section>
+      <h2>{t.tableHeading}</h2>
+      <p>{t.tableIntro}</p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>#</th><th>{t.cantonListHeading}</th><th>~%</th></tr>
+          </thead>
+          <tbody>
+            {cantonOptions.map((c, i) => (
+              <tr>
+                <td>{i + 1}</td>
+                <td>{c.names[lang] || c.names.en}</td>
+                <td>{Math.round(c.rate100k * 1000) / 10}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>{t.leversHeading}</h2>
+      <div class="guide-grid">
+        {t.levers.map((l) => (
+          <div class="card">
+            <h3>{l.title}</h3>
+            <p>{l.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2>{t.faqHeading}</h2>
+      {t.faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </section>
+
+    <p class="disclaimer">{t.disclaimer} <a href="https://www.estv.admin.ch" target="_blank" rel="noopener">{t.sourceLink}</a></p>
+  </div>
+
+  <script type="application/json" id="tax-calc-i18n" set:html={JSON.stringify({ lang, t })} />
+</Layout>
+
+<script>
+  import { computeBreakdown, pillar3aSavings, rankedCantons } from '../../lib/taxCalculator.js';
+
+  {
+    const { lang, t } = JSON.parse(document.getElementById('tax-calc-i18n').textContent);
+    const numberFmt = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
+    const chf = (n) => `${numberFmt.format(Math.round(n))} CHF`;
+
+    const els = {
+      gross: document.getElementById('gross'),
+      grossOutput: document.getElementById('gross-output'),
+      age: document.getElementById('age'),
+      marital: document.getElementById('marital'),
+      kids: document.getElementById('kids'),
+      month13: document.getElementById('month13'),
+      church: document.getElementById('church'),
+      canton: document.getElementById('canton'),
+      pillar3a: document.getElementById('pillar3a'),
+      pillar3aOutput: document.getElementById('pillar3a-output'),
+      pillarSavingsAmount: document.getElementById('pillar-savings-amount'),
+      search: document.getElementById('canton-search'),
+      ranking: document.getElementById('canton-ranking'),
+    };
+
+    function currentInputs() {
+      return {
+        grossMonthly: Number(els.gross.value),
+        age: Number(els.age.value) || 35,
+        marital: els.marital.value,
+        kids: Number(els.kids.value) || 0,
+        month13: els.month13.checked,
+        church: els.church.checked,
+        cantonCode: els.canton.value,
+      };
+    }
+
+    function render() {
+      const inputs = currentInputs();
+      els.grossOutput.textContent = chf(inputs.grossMonthly);
+      els.gross.setAttribute('aria-valuetext', chf(inputs.grossMonthly));
+
+      const b = computeBreakdown(inputs);
+      document.getElementById('detail-canton').textContent = b.canton.names[lang] || b.canton.names.en;
+      document.getElementById('row-gross').textContent = chf(b.grossAnnual);
+      document.getElementById('row-ahv').textContent = `-${chf(b.ahv)}`;
+      document.getElementById('row-bvg').textContent = `-${chf(b.bvg)}`;
+      document.getElementById('row-alv').textContent = `-${chf(b.alv + b.nbu)}`;
+      document.getElementById('row-tax').textContent = `-${chf(b.tax)} (${b.effectiveRatePct.toFixed(1)}%)`;
+      document.getElementById('row-net').textContent = chf(b.netMonthly) + ' ' + t.perMonth;
+      document.getElementById('net-annual').textContent = chf(b.netAnnual);
+
+      const pillarContribution = Number(els.pillar3a.value);
+      els.pillar3aOutput.textContent = chf(pillarContribution);
+      els.pillar3a.setAttribute('aria-valuetext', chf(pillarContribution));
+      els.pillarSavingsAmount.textContent = chf(pillar3aSavings(b, pillarContribution));
+
+      const taxableApprox = Math.max(0, b.grossAnnual - b.ahv - b.alv - b.nbu - b.bvg);
+      const ranked = rankedCantons(taxableApprox, inputs.marital, inputs.kids, inputs.church);
+      const query = (els.search.value || '').toLowerCase();
+      els.ranking.innerHTML = '';
+      ranked
+        .filter((c) => (c.names[lang] || c.names.en).toLowerCase().includes(query))
+        .forEach((c, i) => {
+          const li = document.createElement('li');
+          li.className = c.code === inputs.cantonCode ? 'ranking-item active' : 'ranking-item';
+          li.innerHTML = `<span class="ranking-name">${i + 1}. ${c.names[lang] || c.names.en}</span><span class="ranking-rate">${c.ratePct.toFixed(1)}%</span>`;
+          li.addEventListener('click', () => {
+            els.canton.value = c.code;
+            render();
+          });
+          els.ranking.appendChild(li);
+        });
+    }
+
+    ['input', 'change'].forEach((evt) => {
+      document.getElementById('tax-form').addEventListener(evt, render);
+      els.pillar3a.addEventListener(evt, render);
+    });
+    els.search.addEventListener('input', render);
+
+    render();
+  }
+</script>
+
+<style>
+  .quick-answer {
+    background: var(--color-accent-soft);
+    border-left: 3px solid var(--color-accent);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-6);
+  }
+  #tax-form label {
+    display: block;
+    margin-bottom: var(--space-4);
+  }
+  #tax-form input[type='range'] {
+    width: 100%;
+  }
+  #tax-form output {
+    display: block;
+    font-weight: 700;
+    font-size: var(--text-lg);
+    margin-top: var(--space-1);
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 500;
+  }
+  .checkbox-label input {
+    width: auto;
+    min-height: auto;
+  }
+  #detail {
+    margin-top: var(--space-6);
+  }
+  .breakdown div {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .breakdown dt {
+    color: var(--color-text-secondary);
+  }
+  .breakdown dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .net-row {
+    border-bottom: none !important;
+    font-size: var(--text-lg);
+    padding-top: var(--space-3) !important;
+  }
+  .net-row dt,
+  .net-row dd {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  .net-annual {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+  .net-annual span {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  #canton-search {
+    margin-bottom: var(--space-3);
+  }
+  .canton-ranking {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  :global(.ranking-item) {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+  }
+  :global(.ranking-item:hover) {
+    background: var(--color-bg);
+  }
+  :global(.ranking-item.active) {
+    background: var(--color-accent-soft);
+    font-weight: 700;
+  }
+  .pillar-savings {
+    font-size: var(--text-lg);
+  }
+  .pillar-savings strong {
+    color: var(--color-accent);
+  }
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .guide-grid .card p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+  .table-scroll {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-4);
+  }
+  th, td {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-3) 0;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .faq-item p {
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+  .disclaimer {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin-top: var(--space-6);
+  }
+</style>

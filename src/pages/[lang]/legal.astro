@@ -1,0 +1,177 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  const idiomas = ['es', 'de', 'en', 'fr', 'it', 'pt'];
+  return idiomas.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as 'es' | 'de' | 'en' | 'fr' | 'it' | 'pt';
+
+const t = {
+  es: {
+    pageTitle: 'Aviso legal y privacidad',
+    heading: 'Aviso legal y privacidad',
+    backHome: '← Volver al inicio',
+    s1Title: 'Quién publica este sitio',
+    s1Body:
+      'FirstStepsinCH es un proyecto informativo independiente, no una empresa registrada ni un servicio oficial de ningún organismo suizo. Contacto: [añadir email de contacto].',
+    s2Title: 'Qué datos se procesan',
+    s2Guides: 'Guías: se leen sin necesidad de registro ni envío de datos personales.',
+    s2Builder:
+      'Creador de CV: todo el contenido que escribes (nombre, experiencia, foto, etc.) se guarda únicamente en tu navegador (localStorage) y nunca se envía a ningún servidor. Si borras el historial del navegador, se pierde.',
+    s2Analyzer:
+      'Analizador de CV: el archivo que subes se envía al servidor solo para extraer el texto, que se pasa a Groq (proveedor externo de IA) para generar el análisis. El archivo y el texto extraído no se almacenan en el servidor tras responder la petición.',
+    s2Checklist: 'Checklist de ausencias: es un cuestionario con reglas fijas, no envía ningún dato a ningún servidor.',
+    s2Search: 'Buscador: funciona en tu navegador contra un índice de las guías; no envía tu búsqueda a ningún servidor ni se registra.',
+    s2Chat: 'Asistente/chat: las sugerencias se calculan en tu navegador. Si dejas una pregunta y, opcionalmente, tu email para que te respondamos, esos datos se guardan en el servidor únicamente para poder contestarte — no se comparten con terceros ni se usan con fines publicitarios.',
+    s3Title: 'Cookies y rastreo',
+    s3Body:
+      'Este sitio no usa cookies de seguimiento ni analíticas de terceros. El único almacenamiento local es el `localStorage` técnico del creador de CV, descrito arriba.',
+    s4Title: 'Aviso sobre el contenido',
+    s4Body:
+      'Las guías y herramientas de este sitio son informativas y no constituyen asesoría legal, fiscal ni migratoria. La normativa suiza varía por cantón y cambia con el tiempo — confirma siempre tu caso con la autoridad competente (oficina de migración, comuna, etc.) antes de tomar decisiones importantes.',
+  },
+  de: {
+    pageTitle: 'Impressum und Datenschutz',
+    heading: 'Impressum und Datenschutz',
+    backHome: '← Zurück zur Startseite',
+    s1Title: 'Wer diese Website betreibt',
+    s1Body:
+      'FirstStepsinCH ist ein unabhängiges Informationsprojekt, kein eingetragenes Unternehmen und kein offizieller Dienst einer Schweizer Behörde. Kontakt: [Kontakt-E-Mail hinzufügen].',
+    s2Title: 'Welche Daten verarbeitet werden',
+    s2Guides: 'Leitfäden: Können ohne Registrierung oder Übermittlung persönlicher Daten gelesen werden.',
+    s2Builder:
+      'Lebenslauf-Ersteller: Alle eingegebenen Inhalte (Name, Erfahrung, Foto usw.) werden ausschliesslich in deinem Browser gespeichert (localStorage) und nie an einen Server gesendet. Beim Löschen des Browserverlaufs gehen sie verloren.',
+    s2Analyzer:
+      'Lebenslauf-Analyse: Die hochgeladene Datei wird nur zur Textextraktion an den Server gesendet; der Text wird zur Analyse an Groq (externer KI-Anbieter) weitergeleitet. Datei und extrahierter Text werden nach Beantwortung der Anfrage nicht auf dem Server gespeichert.',
+    s2Checklist: 'Abwesenheits-Checkliste: Ein Fragebogen mit festen Regeln, es werden keine Daten an einen Server gesendet.',
+    s2Search: 'Suche: läuft in deinem Browser gegen einen Index der Leitfäden; deine Suchanfrage wird nicht an einen Server gesendet oder protokolliert.',
+    s2Chat: 'Assistent/Chat: Die Vorschläge werden in deinem Browser berechnet. Wenn du eine Frage und optional deine E-Mail hinterlässt, damit wir dir antworten können, werden diese Daten auf dem Server nur zu diesem Zweck gespeichert — keine Weitergabe an Dritte, keine Werbenutzung.',
+    s3Title: 'Cookies und Tracking',
+    s3Body:
+      'Diese Website verwendet keine Tracking-Cookies oder Drittanbieter-Analysen. Die einzige lokale Speicherung ist das oben beschriebene technische `localStorage` des Lebenslauf-Erstellers.',
+    s4Title: 'Hinweis zum Inhalt',
+    s4Body:
+      'Die Leitfäden und Tools dieser Website sind informativ und stellen keine Rechts-, Steuer- oder Migrationsberatung dar. Die Schweizer Vorschriften variieren je nach Kanton und ändern sich mit der Zeit — bestätige deinen konkreten Fall immer bei der zuständigen Behörde (Migrationsamt, Gemeinde usw.), bevor du wichtige Entscheidungen triffst.',
+  },
+  en: {
+    pageTitle: 'Legal notice and privacy',
+    heading: 'Legal notice and privacy',
+    backHome: '← Back to home',
+    s1Title: 'Who publishes this site',
+    s1Body:
+      'FirstStepsinCH is an independent informational project, not a registered company or an official service of any Swiss authority. Contact: [add contact email].',
+    s2Title: 'What data is processed',
+    s2Guides: 'Guides: can be read without registration or sending any personal data.',
+    s2Builder:
+      'CV builder: everything you type (name, experience, photo, etc.) is stored only in your browser (localStorage) and never sent to any server. Clearing your browser history removes it.',
+    s2Analyzer:
+      'CV analyzer: the file you upload is sent to the server only to extract its text, which is passed to Groq (an external AI provider) to generate the analysis. The file and extracted text are not stored on the server after the request is answered.',
+    s2Checklist: 'Absence checklist: a fixed-rules questionnaire that sends no data to any server.',
+    s2Search: "Search: runs in your browser against an index of the guides; your search terms are never sent to a server or logged.",
+    s2Chat: "Assistant/chat: suggestions are computed in your browser. If you leave a question and, optionally, your email so we can reply, that data is stored on the server only for that purpose — never shared with third parties or used for advertising.",
+    s3Title: 'Cookies and tracking',
+    s3Body:
+      'This site does not use tracking cookies or third-party analytics. The only local storage is the CV builder\'s technical `localStorage`, described above.',
+    s4Title: 'Content notice',
+    s4Body:
+      'The guides and tools on this site are informational and do not constitute legal, tax, or immigration advice. Swiss regulations vary by canton and change over time — always confirm your specific case with the relevant authority (migration office, municipality, etc.) before making important decisions.',
+  },
+  fr: {
+    pageTitle: 'Mentions légales et confidentialité',
+    heading: 'Mentions légales et confidentialité',
+    backHome: "← Retour à l'accueil",
+    s1Title: 'Qui publie ce site',
+    s1Body:
+      "FirstStepsinCH est un projet d'information indépendant, pas une entreprise enregistrée ni un service officiel d'une autorité suisse. Contact : [ajouter l'e-mail de contact].",
+    s2Title: 'Quelles données sont traitées',
+    s2Guides: "Guides : consultables sans inscription ni envoi de données personnelles.",
+    s2Builder:
+      "Créateur de CV : tout ce que vous saisissez (nom, expérience, photo, etc.) est stocké uniquement dans votre navigateur (localStorage) et n'est jamais envoyé à un serveur. L'effacement de l'historique du navigateur le supprime.",
+    s2Analyzer:
+      "Analyseur de CV : le fichier téléchargé est envoyé au serveur uniquement pour en extraire le texte, transmis à Groq (fournisseur d'IA externe) pour générer l'analyse. Le fichier et le texte extrait ne sont pas conservés sur le serveur après la réponse à la requête.",
+    s2Checklist: "Checklist d'absence : un questionnaire à règles fixes qui n'envoie aucune donnée à un serveur.",
+    s2Search: "Recherche : fonctionne dans votre navigateur sur un index des guides ; votre recherche n'est jamais envoyée à un serveur ni enregistrée.",
+    s2Chat: "Assistant/chat : les suggestions sont calculées dans votre navigateur. Si vous laissez une question et, éventuellement, votre e-mail pour que nous puissions vous répondre, ces données sont conservées sur le serveur uniquement à cette fin — jamais partagées avec des tiers ni utilisées à des fins publicitaires.",
+    s3Title: 'Cookies et suivi',
+    s3Body:
+      "Ce site n'utilise aucun cookie de suivi ni d'analyse tierce. Le seul stockage local est le `localStorage` technique du créateur de CV, décrit ci-dessus.",
+    s4Title: 'Avis sur le contenu',
+    s4Body:
+      "Les guides et outils de ce site sont informatifs et ne constituent pas un conseil juridique, fiscal ou migratoire. La réglementation suisse varie selon les cantons et évolue dans le temps — confirmez toujours votre cas précis auprès de l'autorité compétente (office des migrations, commune, etc.) avant de prendre des décisions importantes.",
+  },
+  it: {
+    pageTitle: 'Note legali e privacy',
+    heading: 'Note legali e privacy',
+    backHome: '← Torna alla home',
+    s1Title: 'Chi pubblica questo sito',
+    s1Body:
+      "FirstStepsinCH è un progetto informativo indipendente, non un'azienda registrata né un servizio ufficiale di un'autorità svizzera. Contatto: [aggiungere email di contatto].",
+    s2Title: 'Quali dati vengono trattati',
+    s2Guides: 'Guide: consultabili senza registrazione né invio di dati personali.',
+    s2Builder:
+      "Creatore di CV: tutto ciò che scrivi (nome, esperienza, foto, ecc.) viene salvato solo nel tuo browser (localStorage) e non viene mai inviato a un server. Cancellando la cronologia del browser, i dati vengono persi.",
+    s2Analyzer:
+      "Analizzatore di CV: il file caricato viene inviato al server solo per estrarne il testo, che viene passato a Groq (fornitore esterno di IA) per generare l'analisi. Il file e il testo estratto non vengono conservati sul server dopo aver risposto alla richiesta.",
+    s2Checklist: 'Checklist assenze: un questionario a regole fisse che non invia alcun dato a un server.',
+    s2Search: "Ricerca: funziona nel tuo browser su un indice delle guide; la tua ricerca non viene mai inviata a un server né registrata.",
+    s2Chat: "Assistente/chat: i suggerimenti vengono calcolati nel tuo browser. Se lasci una domanda e, facoltativamente, la tua email per permetterci di risponderti, questi dati vengono salvati sul server solo a questo scopo — mai condivisi con terzi né usati a fini pubblicitari.",
+    s3Title: 'Cookie e tracciamento',
+    s3Body:
+      "Questo sito non utilizza cookie di tracciamento né analisi di terze parti. L'unico salvataggio locale è il `localStorage` tecnico del creatore di CV, descritto sopra.",
+    s4Title: 'Avviso sul contenuto',
+    s4Body:
+      "Le guide e gli strumenti di questo sito sono informativi e non costituiscono consulenza legale, fiscale o migratoria. La normativa svizzera varia da cantone a cantone e cambia nel tempo — verifica sempre il tuo caso specifico con l'autorità competente (ufficio migrazione, comune, ecc.) prima di prendere decisioni importanti.",
+  },
+  pt: {
+    pageTitle: 'Aviso legal e privacidade',
+    heading: 'Aviso legal e privacidade',
+    backHome: '← Voltar ao início',
+    s1Title: 'Quem publica este site',
+    s1Body:
+      'FirstStepsinCH é um projeto informativo independente, não uma empresa registrada nem um serviço oficial de qualquer autoridade suíça. Contato: [adicionar e-mail de contato].',
+    s2Title: 'Que dados são processados',
+    s2Guides: 'Guias: podem ser lidos sem registro nem envio de dados pessoais.',
+    s2Builder:
+      'Criador de CV: tudo o que você digita (nome, experiência, foto, etc.) é armazenado apenas no seu navegador (localStorage) e nunca é enviado a nenhum servidor. Ao limpar o histórico do navegador, os dados são perdidos.',
+    s2Analyzer:
+      'Analisador de CV: o arquivo enviado é encaminhado ao servidor apenas para extrair o texto, que é repassado ao Groq (fornecedor externo de IA) para gerar a análise. O arquivo e o texto extraído não são armazenados no servidor após a resposta à solicitação.',
+    s2Checklist: 'Checklist de ausências: um questionário de regras fixas que não envia nenhum dado a um servidor.',
+    s2Search: 'Busca: funciona no seu navegador sobre um índice dos guias; sua busca nunca é enviada a um servidor nem registrada.',
+    s2Chat: 'Assistente/chat: as sugestões são calculadas no seu navegador. Se você deixar uma pergunta e, opcionalmente, seu email para que possamos responder, esses dados são guardados no servidor apenas para esse fim — nunca compartilhados com terceiros nem usados para publicidade.',
+    s3Title: 'Cookies e rastreamento',
+    s3Body:
+      'Este site não usa cookies de rastreamento nem análises de terceiros. O único armazenamento local é o `localStorage` técnico do criador de CV, descrito acima.',
+    s4Title: 'Aviso sobre o conteúdo',
+    s4Body:
+      'Os guias e ferramentas deste site são informativos e não constituem aconselhamento jurídico, fiscal ou migratório. A regulamentação suíça varia por cantão e muda com o tempo — confirme sempre o seu caso específico com a autoridade competente (escritório de migração, município, etc.) antes de tomar decisões importantes.',
+  },
+}[lang];
+---
+
+<Layout title={t.pageTitle} lang={lang} description={t.s4Body}>
+  <div class="container">
+    <a class="back-link" href={`/${lang}/`}>{t.backHome}</a>
+    <h1>{t.heading}</h1>
+
+    <h2>{t.s1Title}</h2>
+    <p>{t.s1Body}</p>
+
+    <h2>{t.s2Title}</h2>
+    <ul>
+      <li>{t.s2Guides}</li>
+      <li>{t.s2Builder}</li>
+      <li>{t.s2Analyzer}</li>
+      <li>{t.s2Checklist}</li>
+      <li>{t.s2Search}</li>
+      <li>{t.s2Chat}</li>
+    </ul>
+
+    <h2>{t.s3Title}</h2>
+    <p>{t.s3Body}</p>
+
+    <h2>{t.s4Title}</h2>
+    <p>{t.s4Body}</p>
+  </div>
+</Layout>

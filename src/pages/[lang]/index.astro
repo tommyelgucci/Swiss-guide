@@ -51,6 +51,174 @@ const grupos = topicOrder
   }))
   .filter((grupo) => grupo.guias.length > 0);
 
+// Guías por país solo existen en es/en por ahora.
+const porPaisLangs = ['es', 'en'];
+const porPaisBanner: Record<string, { title: string; text: string; cta: string }> = {
+  es: {
+    title: 'Guías por país de origen',
+    text: '¿Eres español, o vienes de Latinoamérica sin pasaporte europeo? Hay guías específicas para tu situación.',
+    cta: 'Ver guías por país →',
+  },
+  en: {
+    title: 'Guides by country of origin',
+    text: 'Are you Spanish, or coming from Latin America without a European passport? There are guides specific to your situation.',
+    cta: 'See guides by country →',
+  },
+};
+
+const toolLangs = ['en', 'de', 'it', 'fr'];
+const toolsLang = toolLangs.includes(lang) ? lang : 'en';
+const porPaisLangs2 = ['es', 'en'];
+
+type Faq = { q: string; href: string };
+
+const heroContent: Record<string, {
+  badge: string;
+  headline: string;
+  story: string[];
+  audience: { title: string; text: string }[];
+  faqHeading: string;
+  faq: Faq[];
+  scrollCta: string;
+}> = {
+  es: {
+    badge: 'Por qué existe FirstStepsinCH',
+    headline: 'Suiza no te explica las cosas dos veces. Yo sí.',
+    story: [
+      'Creé este sitio porque viví de primera mano lo disperso y confuso que es encontrar información fiable para instalarte en Suiza: un trámite explicado en un foro, otro en un PDF del cantón en alemán, y mucho consejo contradictorio en grupos de Facebook.',
+      'Aquí lo junto todo en un solo lugar, en tu idioma, tanto si acabas de llegar y no sabes por dónde empezar, como si ya llevas tiempo trabajando aquí y todavía te surgen dudas sobre impuestos, tu permiso o tu próximo paso.',
+    ],
+    audience: [
+      { title: 'Recién llegado/a', text: 'Trámites, vivienda, banco, seguro de salud — el orden correcto para no perderte los plazos.' },
+      { title: 'Ya vives y trabajas aquí', text: 'Impuestos, mantener tu permiso, cambiar de trabajo — las dudas que aparecen después del primer año.' },
+    ],
+    faqHeading: 'Preguntas que quizá tengas ahora mismo',
+    faq: [
+      { q: '¿Qué debo tramitar primero al llegar?', href: `/${lang}/guias/permisos` },
+      { q: '¿Cuánto impuesto pagaré y cuánto me queda neto?', href: `/${lang}/tax-calculator` },
+      { q: '¿Cómo hago un CV que funcione en Suiza?', href: toolLangs.includes(lang) ? `/${toolsLang}/cv-builder` : `/${lang}/guias/buscar-trabajo` },
+      { q: '¿Qué pasa con mi permiso si salgo del país mucho tiempo?', href: `/${lang}/guias/mantener-permiso` },
+      ...(porPaisLangs2.includes(lang) ? [{ q: 'Vengo de Latinoamérica sin pasaporte europeo, ¿puedo venir a trabajar?', href: `/${lang}/por-pais` }] : [{ q: '¿Qué necesito para alquilar un piso?', href: `/${lang}/guias/alquiler` }]),
+    ],
+    scrollCta: 'Ver todas las guías ↓',
+  },
+  de: {
+    badge: 'Warum es FirstStepsinCH gibt',
+    headline: 'Die Schweiz erklärt dir nichts zweimal. Ich schon.',
+    story: [
+      'Ich habe diese Seite gegründet, weil ich selbst erlebt habe, wie zerstreut und verwirrend es ist, verlässliche Informationen für den Umzug in die Schweiz zu finden: ein Verfahren in einem Forum erklärt, ein anderes in einem kantonalen PDF auf Deutsch, und viele widersprüchliche Ratschläge in Facebook-Gruppen.',
+      'Hier sammle ich alles an einem Ort, in deiner Sprache — egal ob du gerade erst angekommen bist und nicht weisst, wo du anfangen sollst, oder ob du schon länger hier arbeitest und noch Fragen zu Steuern, deiner Bewilligung oder dem nächsten Schritt hast.',
+    ],
+    audience: [
+      { title: 'Gerade erst angekommen', text: 'Formalitäten, Wohnen, Bank, Krankenversicherung — die richtige Reihenfolge, um keine Frist zu verpassen.' },
+      { title: 'Du lebst und arbeitest schon hier', text: 'Steuern, Bewilligung behalten, Jobwechsel — die Fragen, die nach dem ersten Jahr auftauchen.' },
+    ],
+    faqHeading: 'Fragen, die du dir vielleicht gerade stellst',
+    faq: [
+      { q: 'Was muss ich als Erstes bei der Ankunft erledigen?', href: `/${lang}/guias/permisos` },
+      { q: 'Wie viel Steuern zahle ich und was bleibt mir netto?', href: `/${lang}/tax-calculator` },
+      { q: 'Wie erstelle ich einen Lebenslauf, der in der Schweiz funktioniert?', href: `/${toolsLang}/cv-builder` },
+      { q: 'Was passiert mit meiner Bewilligung, wenn ich lange abwesend bin?', href: `/${lang}/guias/mantener-permiso` },
+      { q: 'Was brauche ich, um eine Wohnung zu mieten?', href: `/${lang}/guias/alquiler` },
+    ],
+    scrollCta: 'Alle Leitfäden ansehen ↓',
+  },
+  en: {
+    badge: 'Why FirstStepsinCH exists',
+    headline: "Switzerland won't explain things twice. I will.",
+    story: [
+      "I built this site because I lived firsthand how scattered and confusing it is to find reliable information for settling in Switzerland: one procedure explained in a forum, another in a canton's PDF in German, and plenty of contradictory advice in Facebook groups.",
+      "Here I bring it all together in one place, in your language — whether you've just arrived and don't know where to start, or you've already been working here for a while and still have questions about taxes, your permit, or your next step.",
+    ],
+    audience: [
+      { title: 'Just arrived', text: 'Paperwork, housing, bank, health insurance — the right order so you don\'t miss a deadline.' },
+      { title: 'Already living and working here', text: 'Taxes, keeping your permit, changing jobs — the questions that show up after the first year.' },
+    ],
+    faqHeading: 'Questions you might have right now',
+    faq: [
+      { q: 'What should I sort out first when I arrive?', href: `/${lang}/guias/permisos` },
+      { q: 'How much tax will I pay, and what do I take home net?', href: `/${lang}/tax-calculator` },
+      { q: 'How do I build a CV that works in Switzerland?', href: `/${toolsLang}/cv-builder` },
+      { q: 'What happens to my permit if I leave the country for a long time?', href: `/${lang}/guias/mantener-permiso` },
+      ...(porPaisLangs2.includes(lang) ? [{ q: "I'm from Latin America without a European passport — can I come work here?", href: `/${lang}/por-pais` }] : [{ q: 'What do I need to rent an apartment?', href: `/${lang}/guias/alquiler` }]),
+    ],
+    scrollCta: 'See all guides ↓',
+  },
+  fr: {
+    badge: 'Pourquoi FirstStepsinCH existe',
+    headline: "La Suisse ne vous explique rien deux fois. Moi, si.",
+    story: [
+      "J'ai créé ce site parce que j'ai vécu moi-même à quel point il est dispersé et confus de trouver des informations fiables pour s'installer en Suisse : une démarche expliquée sur un forum, une autre dans un PDF cantonal en allemand, et beaucoup de conseils contradictoires dans les groupes Facebook.",
+      "Ici, je rassemble tout au même endroit, dans votre langue — que vous veniez d'arriver et ne sachiez pas par où commencer, ou que vous travailliez déjà ici depuis un moment et ayez encore des questions sur les impôts, votre permis ou votre prochaine étape.",
+    ],
+    audience: [
+      { title: 'Vous venez d\'arriver', text: 'Démarches, logement, banque, assurance maladie — le bon ordre pour ne rater aucun délai.' },
+      { title: 'Vous vivez et travaillez déjà ici', text: 'Impôts, garder votre permis, changer d\'emploi — les questions qui apparaissent après la première année.' },
+    ],
+    faqHeading: 'Des questions que vous vous posez peut-être',
+    faq: [
+      { q: 'Que dois-je régler en premier à mon arrivée ?', href: `/${lang}/guias/permisos` },
+      { q: 'Combien d\'impôts vais-je payer, et combien me reste-t-il net ?', href: `/${lang}/tax-calculator` },
+      { q: 'Comment faire un CV qui fonctionne en Suisse ?', href: `/${toolsLang}/cv-builder` },
+      { q: 'Que se passe-t-il pour mon permis si je quitte le pays longtemps ?', href: `/${lang}/guias/mantener-permiso` },
+      { q: 'De quoi ai-je besoin pour louer un logement ?', href: `/${lang}/guias/alquiler` },
+    ],
+    scrollCta: 'Voir tous les guides ↓',
+  },
+  it: {
+    badge: 'Perché esiste FirstStepsinCH',
+    headline: 'La Svizzera non te lo spiega due volte. Io sì.',
+    story: [
+      'Ho creato questo sito perché ho vissuto in prima persona quanto sia dispersivo e confuso trovare informazioni affidabili per trasferirsi in Svizzera: una pratica spiegata in un forum, un\'altra in un PDF cantonale in tedesco, e tanti consigli contraddittori nei gruppi Facebook.',
+      'Qui raccolgo tutto in un unico posto, nella tua lingua — sia che tu sia appena arrivato/a e non sappia da dove iniziare, sia che tu lavori già qui da un po\' e abbia ancora dubbi su tasse, permesso o prossimo passo.',
+    ],
+    audience: [
+      { title: 'Appena arrivato/a', text: 'Pratiche, casa, banca, assicurazione malattia — l\'ordine giusto per non perdere nessuna scadenza.' },
+      { title: 'Vivi e lavori già qui', text: 'Tasse, mantenere il permesso, cambiare lavoro — i dubbi che emergono dopo il primo anno.' },
+    ],
+    faqHeading: 'Domande che forse hai proprio ora',
+    faq: [
+      { q: 'Cosa devo sistemare per primo all\'arrivo?', href: `/${lang}/guias/permisos` },
+      { q: 'Quante tasse pagherò e quanto mi resta netto?', href: `/${lang}/tax-calculator` },
+      { q: 'Come faccio un CV che funzioni in Svizzera?', href: `/${toolsLang}/cv-builder` },
+      { q: 'Cosa succede al mio permesso se sto fuori dal paese a lungo?', href: `/${lang}/guias/mantener-permiso` },
+      { q: 'Cosa mi serve per affittare un appartamento?', href: `/${lang}/guias/alquiler` },
+    ],
+    scrollCta: 'Vedi tutte le guide ↓',
+  },
+  pt: {
+    badge: 'Por que existe o FirstStepsinCH',
+    headline: 'A Suíça não explica as coisas duas vezes. Eu explico.',
+    story: [
+      'Criei este site porque vivi na prática o quanto é disperso e confuso encontrar informação confiável para se instalar na Suíça: um trâmite explicado num fórum, outro num PDF do cantão em alemão, e muito conselho contraditório em grupos de Facebook.',
+      'Aqui reúno tudo num só lugar, no seu idioma — seja você que acabou de chegar e não sabe por onde começar, ou que já trabalha aqui há um tempo e ainda tem dúvidas sobre impostos, sua autorização ou o próximo passo.',
+    ],
+    audience: [
+      { title: 'Recém-chegado/a', text: 'Trâmites, moradia, banco, seguro-saúde — a ordem certa para não perder nenhum prazo.' },
+      { title: 'Já vive e trabalha aqui', text: 'Impostos, manter sua autorização, trocar de emprego — as dúvidas que surgem depois do primeiro ano.' },
+    ],
+    faqHeading: 'Perguntas que talvez você tenha agora',
+    faq: [
+      { q: 'O que devo resolver primeiro ao chegar?', href: `/${lang}/guias/permisos` },
+      { q: 'Quanto imposto vou pagar e quanto sobra líquido?', href: `/${lang}/tax-calculator` },
+      { q: 'Como faço um currículo que funcione na Suíça?', href: `/${toolsLang}/cv-builder` },
+      { q: 'O que acontece com minha autorização se eu ficar muito tempo fora do país?', href: `/${lang}/guias/mantener-permiso` },
+      { q: 'O que preciso para alugar um apartamento?', href: `/${lang}/guias/alquiler` },
+    ],
+    scrollCta: 'Ver todos os guias ↓',
+  },
+};
+const hero = heroContent[lang] || heroContent.es;
+
+const taxCalcBanner: Record<string, { title: string; text: string; cta: string }> = {
+  es: { title: 'Calculadora de impuestos', text: 'Si ya vives y trabajas en Suiza: compara tu sueldo neto en los 26 cantones y cuánto podrías ahorrar con el Tercer Pilar.', cta: 'Calcular mi sueldo neto →' },
+  de: { title: 'Steuerrechner', text: 'Lebst und arbeitest du schon in der Schweiz? Vergleiche deinen Nettolohn in allen 26 Kantonen und was du mit der Säule 3a sparen könntest.', cta: 'Nettolohn berechnen →' },
+  en: { title: 'Tax calculator', text: 'Already living and working in Switzerland? Compare your net salary across all 26 cantons and how much you could save with pillar 3a.', cta: 'Calculate my net salary →' },
+  fr: { title: "Calculateur d'impôts", text: 'Vous vivez et travaillez déjà en Suisse ? Comparez votre salaire net dans les 26 cantons et ce que vous pourriez économiser avec le 3e pilier.', cta: 'Calculer mon salaire net →' },
+  it: { title: 'Calcolatore imposte', text: 'Vivi e lavori già in Svizzera? Confronta il tuo stipendio netto nei 26 cantoni e quanto potresti risparmiare con il terzo pilastro.', cta: 'Calcola il mio netto →' },
+  pt: { title: 'Calculadora de impostos', text: 'Já vive e trabalha na Suíça? Compare seu salário líquido nos 26 cantões e quanto poderia economizar com o Terceiro Pilar.', cta: 'Calcular meu líquido →' },
+};
+
 const topicIcons: Record<string, string> = {
   tramites:
     '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="9.5" cy="9" r="2"/><path d="M7 14.5c.5-1.6 1.4-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14.5 8h3M14.5 11h3"/>',
@@ -68,11 +236,53 @@ const topicIcons: Record<string, string> = {
     '<rect x="3" y="10" width="18" height="8" rx="2"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 14h18"/>',
 };
 ---
-<Layout title={titulos[lang]} lang={lang}>
-  <div class="hero">
-    <h1>{titulos[lang]}</h1>
+<Layout title={titulos[lang]} lang={lang} description={intros[lang] || intros.es}>
+  <div class="story-hero">
+    <p class="story-badge">{hero.badge}</p>
+    <h1>{hero.headline}</h1>
+    {hero.story.map((p) => <p class="story-p">{p}</p>)}
+
+    <div class="audience-row">
+      {hero.audience.map((a) => (
+        <div class="audience-card">
+          <h3>{a.title}</h3>
+          <p>{a.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <h2 class="faq-heading">{hero.faqHeading}</h2>
+    <div class="faq-chips">
+      {hero.faq.map((item) => (
+        <a class="faq-chip" href={item.href}>{item.q}</a>
+      ))}
+    </div>
+
+    <a class="scroll-cta" href="#guias">{hero.scrollCta}</a>
+  </div>
+
+  <div id="guias" class="hero">
+    <h2>{titulos[lang]}</h2>
     <p>{intros[lang] || intros.es}</p>
   </div>
+
+  {porPaisLangs.includes(lang) && (
+    <a class="por-pais-banner" href={`/${lang}/por-pais`}>
+      <div>
+        <h2>{porPaisBanner[lang].title}</h2>
+        <p>{porPaisBanner[lang].text}</p>
+      </div>
+      <span class="por-pais-cta">{porPaisBanner[lang].cta}</span>
+    </a>
+  )}
+
+  <a class="por-pais-banner" href={`/${lang}/tax-calculator`}>
+    <div>
+      <h2>{(taxCalcBanner[lang] || taxCalcBanner.en).title}</h2>
+      <p>{(taxCalcBanner[lang] || taxCalcBanner.en).text}</p>
+    </div>
+    <span class="por-pais-cta">{(taxCalcBanner[lang] || taxCalcBanner.en).cta}</span>
+  </a>
 
   {grupos.map((grupo) => (
     <section>
@@ -96,6 +306,80 @@ const topicIcons: Record<string, string> = {
 </Layout>
 
 <style>
+  .story-hero {
+    padding: var(--space-7) 0 var(--space-6);
+    max-width: 68ch;
+  }
+  .story-badge {
+    display: inline-block;
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--space-3);
+  }
+  .story-hero h1 {
+    margin-bottom: var(--space-4);
+  }
+  .story-p {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+  .audience-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin: var(--space-6) 0;
+  }
+  .audience-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+  .audience-card h3 {
+    margin-bottom: var(--space-2);
+  }
+  .audience-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+  .faq-heading {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-lg);
+  }
+  .faq-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .faq-chip {
+    display: inline-block;
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .faq-chip:hover {
+    border-color: var(--color-accent);
+  }
+  .scroll-cta {
+    display: inline-block;
+    margin-top: var(--space-6);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+  #guias h2 {
+    margin-top: 0;
+  }
   .guide-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -108,5 +392,32 @@ const topicIcons: Record<string, string> = {
   }
   .guide-grid .meta-row {
     margin: 0;
+  }
+  .por-pais-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    background: var(--color-accent-soft);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    text-decoration: none;
+    color: inherit;
+  }
+  .por-pais-banner h2 {
+    margin: 0 0 var(--space-1);
+  }
+  .por-pais-banner p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+  .por-pais-cta {
+    color: var(--color-accent);
+    font-weight: 600;
+    white-space: nowrap;
   }
 </style>

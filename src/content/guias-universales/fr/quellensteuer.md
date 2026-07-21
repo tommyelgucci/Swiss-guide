@@ -35,3 +35,10 @@ salaire peut générer une retenue différente selon l'endroit où vous
 habitez, pas seulement où vous travaillez. Cela génère de fréquentes
 surprises en cas de changement de canton de résidence sans changement
 d'emploi.
+
+## Calculez votre cas
+
+Utilisez le [calculateur d'impôts par canton](/fr/tax-calculator) pour
+comparer ce qu'il vous resterait net selon votre canton, votre âge et
+votre situation familiale, avec une estimation de ce que vous pourriez
+récupérer en cotisant au 3e pilier.

@@ -38,3 +38,28 @@ Elle correspond généralement à 2-3 mois de loyer et est déposée sur un
 compte bancaire bloqué à votre nom (elle n'est pas remise en espèces au
 propriétaire). Elle est libérée à la fin du bail s'il n'y a pas de
 dommages à payer.
+
+## Assurances recommandées (pas la LAMal)
+
+Au-delà de l'assurance maladie obligatoire, presque tous les locataires
+en Suisse souscrivent trois autres assurances — pas obligatoires
+légalement, mais souvent exigées en pratique par les propriétaires, et
+peu coûteuses :
+
+- **Responsabilité civile privée (Haftpflichtversicherung)** : couvre
+  les dommages accidentels que vous causez à des tiers ou au logement
+  loué (par exemple une fuite d'eau qui endommage l'appartement du
+  dessous). Coûte environ 50-100 CHF par an, et beaucoup de baux
+  l'exigent comme condition.
+- **Protection juridique (Rechtsschutzversicherung)** : couvre les
+  frais d'avocat et de justice en cas de litige — avec le propriétaire,
+  au travail, suite à un accident de la route, etc. Pas obligatoire,
+  mais évite qu'un désaccord avec le propriétaire ne devienne
+  impayable.
+- **Assurance ménage (Hausratversicherung)** : couvre vos biens
+  (meubles, électronique, vêtements) en cas de vol, d'incendie ou de
+  dégât d'eau. Particulièrement utile si vous déménagez avec des objets
+  de valeur.
+
+Beaucoup d'assureurs (Zurich, AXA, Mobiliar, Baloise) vendent ces trois
+assurances en un pack combiné moins cher que séparément.

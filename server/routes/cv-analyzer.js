@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import mammoth from 'mammoth';
 import pdfParse from 'pdf-parse';
+import { createRateLimiter } from '../lib/rateLimit.js';
 
 const router = Router();
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -13,6 +14,10 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
+
+// El análisis llama a una API de pago (Groq) por cada request — sin límite
+// esto es un vector de abuso de costo. Máximo 10 análisis por IP cada hora.
+const analyzeRateLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 });
 
 router.get('/status', (req, res) => {
   res.json({ enabled: Boolean(GROQ_API_KEY) });
@@ -33,9 +38,8 @@ async function extractText(file) {
   return null;
 }
 
-function systemPrompt(lang) {
-  if (lang === 'en') {
-    return `You are an expert Swiss recruiter and ATS (Applicant Tracking System) consultant. You review CVs submitted by people applying for jobs in Switzerland and give concrete, actionable feedback based on Swiss recruiting conventions: reverse chronological order, a photo is customary, an "Arbeitszeugnis"/certificate of employment is expected from Swiss employers, CVs are usually 1-2 pages, clear contact details, and a closing with place/date/signature.
+const SYSTEM_PROMPTS = {
+  en: `You are an expert Swiss recruiter and ATS (Applicant Tracking System) consultant. You review CVs submitted by people applying for jobs in Switzerland and give concrete, actionable feedback based on Swiss recruiting conventions: reverse chronological order, a photo is customary, an "Arbeitszeugnis"/certificate of employment is expected from Swiss employers, CVs are usually 1-2 pages, clear contact details, and a closing with place/date/signature.
 
 Respond ONLY with a valid JSON object (no markdown, no text before or after) with this exact shape:
 {"score": <integer 0-100>, "summary": "<2-3 sentence overall assessment in English>", "strengths": ["<short strength>", ...], "issues": [{"category": "<short category name>", "detail": "<what's wrong>", "suggestion": "<concrete fix>"}, ...]}
@@ -44,18 +48,41 @@ Rules:
 - "score" reflects how ready the CV is for a Swiss ATS + recruiter (100 = excellent, 0 = very poor).
 - 2 to 5 items in "strengths".
 - 3 to 8 items in "issues", ordered from most to least important.
-- Be specific to what's actually in the CV text provided, not generic advice.`;
-  }
-  return `Eres un reclutador suizo experto y consultor de ATS (Applicant Tracking System). Revisas CVs de personas que buscan trabajo en Suiza y das feedback concreto y accionable según las convenciones suizas de reclutamiento: orden cronológico inverso, foto habitual, se espera mención de "Arbeitszeugnis"/certificado de trabajo de empleadores suizos, el CV suele ocupar 1-2 páginas, datos de contacto claros, y cierre con lugar/fecha/firma.
+- Be specific to what's actually in the CV text provided, not generic advice.`,
+  de: `Du bist ein erfahrener Schweizer Recruiter und ATS-Berater (Applicant Tracking System). Du prüfst Lebensläufe von Personen, die sich in der Schweiz bewerben, und gibst konkretes, umsetzbares Feedback nach Schweizer Rekrutierungskonventionen: umgekehrte chronologische Reihenfolge, ein Foto ist üblich, ein Arbeitszeugnis wird von Schweizer Arbeitgebern erwartet, Lebensläufe umfassen meist 1-2 Seiten, klare Kontaktdaten, und ein Abschluss mit Ort/Datum/Unterschrift.
 
-Responde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin texto antes ni después) con esta forma exacta:
-{"score": <entero 0-100>, "summary": "<valoración general en 2-3 frases, en español>", "strengths": ["<punto fuerte breve>", ...], "issues": [{"category": "<nombre corto de categoría>", "detail": "<qué está mal>", "suggestion": "<solución concreta>"}, ...]}
+Antworte AUSSCHLIESSLICH mit einem gültigen JSON-Objekt (kein Markdown, kein Text davor oder danach) in genau dieser Form:
+{"score": <ganze Zahl 0-100>, "summary": "<Gesamtbewertung in 2-3 Sätzen, auf Deutsch>", "strengths": ["<kurze Stärke>", ...], "issues": [{"category": "<kurzer Kategoriename>", "detail": "<was ist falsch>", "suggestion": "<konkrete Lösung>"}, ...]}
 
-Reglas:
-- "score" refleja qué tan preparado está el CV para un ATS + reclutador suizo (100 = excelente, 0 = muy deficiente).
-- Entre 2 y 5 elementos en "strengths".
-- Entre 3 y 8 elementos en "issues", ordenados de más a menos importante.
-- Sé específico sobre lo que realmente hay en el texto del CV proporcionado, no des consejos genéricos.`;
+Regeln:
+- "score" spiegelt wider, wie bereit der Lebenslauf für ein Schweizer ATS + Recruiter ist (100 = ausgezeichnet, 0 = sehr mangelhaft).
+- 2 bis 5 Elemente in "strengths".
+- 3 bis 8 Elemente in "issues", nach Wichtigkeit geordnet.
+- Beziehe dich konkret auf den bereitgestellten Lebenslauftext, keine generischen Ratschläge.`,
+  it: `Sei un esperto recruiter svizzero e consulente ATS (Applicant Tracking System). Rivedi i CV di persone che cercano lavoro in Svizzera e dai un feedback concreto e attuabile secondo le convenzioni svizzere di reclutamento: ordine cronologico inverso, la foto è abituale, ci si aspetta la menzione dell'Arbeitszeugnis/certificato di lavoro dai datori di lavoro svizzeri, i CV occupano di solito 1-2 pagine, dati di contatto chiari, e una chiusura con luogo/data/firma.
+
+Rispondi SOLO con un oggetto JSON valido (senza markdown, senza testo prima o dopo) con questa forma esatta:
+{"score": <intero 0-100>, "summary": "<valutazione generale in 2-3 frasi, in italiano>", "strengths": ["<punto di forza breve>", ...], "issues": [{"category": "<nome breve della categoria>", "detail": "<cosa non va>", "suggestion": "<soluzione concreta>"}, ...]}
+
+Regole:
+- "score" riflette quanto il CV sia pronto per un ATS + recruiter svizzero (100 = eccellente, 0 = molto scarso).
+- Da 2 a 5 elementi in "strengths".
+- Da 3 a 8 elementi in "issues", ordinati dal più al meno importante.
+- Sii specifico su ciò che è realmente presente nel testo del CV fornito, non dare consigli generici.`,
+  fr: `Vous êtes un recruteur suisse expert et consultant ATS (Applicant Tracking System). Vous examinez les CV de personnes postulant à des emplois en Suisse et donnez un retour concret et actionnable selon les conventions suisses de recrutement : ordre chronologique inversé, une photo est habituelle, un certificat de travail (Arbeitszeugnis) est attendu des employeurs suisses, les CV comptent généralement 1-2 pages, des coordonnées claires, et une conclusion avec lieu/date/signature.
+
+Répondez UNIQUEMENT avec un objet JSON valide (sans markdown, sans texte avant ou après) selon cette forme exacte :
+{"score": <entier 0-100>, "summary": "<évaluation générale en 2-3 phrases, en français>", "strengths": ["<point fort bref>", ...], "issues": [{"category": "<nom de catégorie court>", "detail": "<ce qui ne va pas>", "suggestion": "<solution concrète>"}, ...]}
+
+Règles :
+- "score" reflète le degré de préparation du CV pour un ATS + recruteur suisse (100 = excellent, 0 = très insuffisant).
+- 2 à 5 éléments dans "strengths".
+- 3 à 8 éléments dans "issues", classés du plus au moins important.
+- Soyez précis sur ce qui figure réellement dans le texte du CV fourni, pas de conseils génériques.`,
+};
+
+function systemPrompt(lang) {
+  return SYSTEM_PROMPTS[lang] || SYSTEM_PROMPTS.en;
 }
 
 function extractJSON(text) {
@@ -103,33 +130,34 @@ function handleUpload(req, res, next) {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res
         .status(413)
-        .json({ error: 'El archivo supera el límite de 5 MB. / File exceeds the 5 MB limit.' });
+        .json({ error: 'File exceeds the 5 MB limit.' });
     }
     return res
       .status(400)
-      .json({ error: 'No se pudo procesar el archivo subido. / Could not process the uploaded file.' });
+      .json({ error: 'Could not process the uploaded file.' });
   });
 }
 
-router.post('/analyze', handleUpload, async (req, res) => {
+router.post('/analyze', analyzeRateLimit, handleUpload, async (req, res) => {
   if (!GROQ_API_KEY) {
-    return res.status(503).json({ error: 'IA no configurada en el servidor (falta GROQ_API_KEY)' });
+    return res.status(503).json({ error: 'AI not configured on the server (missing GROQ_API_KEY)' });
   }
   if (!req.file) {
-    return res.status(400).json({ error: 'Falta el archivo del CV (campo "cv")' });
+    return res.status(400).json({ error: 'Missing CV file (field "cv")' });
   }
-  const lang = req.body?.lang === 'en' ? 'en' : 'es';
+  const ALLOWED_LANGS = ['en', 'de', 'it', 'fr'];
+  const lang = ALLOWED_LANGS.includes(req.body?.lang) ? req.body.lang : 'en';
 
   let text;
   try {
     text = await extractText(req.file);
   } catch {
-    return res.status(422).json({ error: 'No se pudo leer el archivo. Comprueba que no esté dañado o protegido.' });
+    return res.status(422).json({ error: 'Could not read the file. Check that it is not corrupted or password-protected.' });
   }
   if (!text || !text.trim()) {
     return res
       .status(422)
-      .json({ error: 'Formato no soportado. Sube un PDF o un DOCX con texto seleccionable (no un escaneo).' });
+      .json({ error: 'Unsupported format. Upload a PDF or DOCX with selectable text (not a scan).' });
   }
 
   const cleanText = text.trim().slice(0, MAX_TEXT_CHARS);
@@ -155,9 +183,10 @@ router.post('/analyze', handleUpload, async (req, res) => {
 
     if (!groqRes.ok) {
       const errText = await groqRes.text().catch(() => '');
+      console.error(`Groq error (${groqRes.status}): ${errText || groqRes.statusText}`);
       return res
         .status(502)
-        .json({ error: `Groq error (${groqRes.status}): ${errText || groqRes.statusText}` });
+        .json({ error: 'The AI service is temporarily unavailable. Please try again in a moment.' });
     }
 
     const data = await groqRes.json();
@@ -168,11 +197,12 @@ router.post('/analyze', handleUpload, async (req, res) => {
 
     const result = sanitizeResult(extractJSON(content));
     if (!result) {
-      return res.status(502).json({ error: 'La IA no devolvió un análisis con formato válido. Intenta de nuevo.' });
+      return res.status(502).json({ error: 'The AI did not return a validly formatted analysis. Please try again.' });
     }
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Error desconocido' });
+    console.error('CV analysis failed', err);
+    res.status(500).json({ error: 'Something went wrong while analyzing your CV. Please try again.' });
   }
 });
 

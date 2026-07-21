@@ -31,3 +31,10 @@ Each canton sets its own rates and brackets, so the same payslip can result
 in a different withholding depending on where you live, not just where you
 work. This often causes surprises when changing canton of residence without
 changing jobs.
+
+## Calculate your case
+
+Use the [tax calculator by canton](/en/tax-calculator) to compare what
+you'd take home net depending on your canton, age and family situation,
+including an estimate of how much you could get back by contributing to
+pillar 3a.

@@ -35,3 +35,25 @@ within hours — you need to react fast, and sometimes attend group viewings
 Usually equal to 2-3 months' rent, held in a blocked bank account in your
 name (never handed to the landlord in cash). It's released at the end of
 the lease if there's no unpaid damage.
+
+## Recommended insurance (not LAMal)
+
+Beyond the mandatory health insurance, there are three insurances almost
+every tenant in Switzerland takes out — not legally required, but many
+landlords require them in practice, and they're cheap:
+
+- **Private liability insurance (Haftpflichtversicherung)**: covers
+  accidental damage you cause to third parties or to the rented property
+  (e.g. a water leak that damages the flat below). Costs roughly
+  CHF 50-100 a year, and many rental contracts require it as a
+  condition.
+- **Legal protection insurance (Rechtsschutzversicherung)**: covers
+  lawyer and court costs if you end up in a dispute — with your
+  landlord, at work, over a traffic incident, etc. Not mandatory, but it
+  stops a disagreement with the landlord from becoming unaffordable.
+- **Household contents insurance (Hausratversicherung)**: covers your
+  belongings (furniture, electronics, clothes) in case of theft, fire or
+  water damage. Especially useful if you're moving with valuable items.
+
+Many insurers (Zurich, AXA, Mobiliar, Baloise) sell all three as a
+bundle, cheaper than taking them out separately.
