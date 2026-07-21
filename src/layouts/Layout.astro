@@ -6,8 +6,31 @@ interface Props {
   title: string;
   lang: string;
   availableLangs?: string[];
+  description?: string;
 }
-const { title, lang, availableLangs } = Astro.props;
+const { title, lang, availableLangs, description } = Astro.props;
+
+const defaultDescriptions: Record<string, string> = {
+  es: 'Guías prácticas para vivir y trabajar en Suiza — trámites, vivienda, trabajo, impuestos y salud, en 6 idiomas.',
+  de: 'Praktische Leitfäden für das Leben und Arbeiten in der Schweiz — Formalitäten, Wohnen, Arbeit, Steuern und Gesundheit, in 6 Sprachen.',
+  en: 'Practical guides to living and working in Switzerland — paperwork, housing, work, taxes, and health, in 6 languages.',
+  fr: 'Guides pratiques pour vivre et travailler en Suisse — démarches, logement, travail, impôts et santé, en 6 langues.',
+  it: 'Guide pratiche per vivere e lavorare in Svizzera — pratiche, alloggio, lavoro, tasse e salute, in 6 lingue.',
+  pt: 'Guias práticos para viver e trabalhar na Suíça — trâmites, moradia, trabalho, impostos e saúde, em 6 idiomas.',
+};
+const pageDescription = description || defaultDescriptions[lang] || defaultDescriptions.es;
+
+const ogLocales: Record<string, string> = {
+  es: 'es_ES',
+  de: 'de_CH',
+  en: 'en_US',
+  fr: 'fr_CH',
+  it: 'it_CH',
+  pt: 'pt_PT',
+};
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageUrl = new URL('/og-image.png', Astro.site).toString();
 
 // El creador/analizador de CV solo existen en en/de/it/fr (idiomas oficiales
 // de Suiza + inglés) — nunca en español, que no es idioma suizo. Si la
@@ -25,6 +48,15 @@ const footerText: Record<string, string> = {
   pt: 'FirstStepsinCH — guias para estrangeiros na Suíça.',
 };
 
+const legalLabels: Record<string, string> = {
+  es: 'Aviso legal y privacidad',
+  de: 'Impressum und Datenschutz',
+  en: 'Legal notice and privacy',
+  fr: 'Mentions légales et confidentialité',
+  it: 'Note legali e privacy',
+  pt: 'Aviso legal e privacidade',
+};
+
 const toolLabels: Record<string, { builder: string; analyzer: string; checklist: string }> = {
   en: { builder: 'CV builder', analyzer: 'CV analyzer', checklist: 'Absence checklist' },
   de: { builder: 'Lebenslauf-Ersteller', analyzer: 'Lebenslauf-Analyse', checklist: 'Abwesenheits-Checkliste' },
@@ -39,6 +71,28 @@ const labels = toolLabels[toolsLang];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FirstStepsinCH" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocales[lang] || ogLocales.es} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -80,6 +134,7 @@ const labels = toolLabels[toolsLang];
     <footer class="site-footer">
       <div class="container-wide">
         <p>{footerText[lang] || footerText.es}</p>
+        <p><a href={`/${lang}/legal`}>{legalLabels[lang] || legalLabels.es}</a></p>
       </div>
     </footer>
   </body>

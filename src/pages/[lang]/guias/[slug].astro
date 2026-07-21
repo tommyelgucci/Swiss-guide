@@ -32,7 +32,7 @@ const backLabels: Record<string, string> = {
   pt: '← Todos os guias',
 };
 ---
-<Layout title={guia.data.titulo} lang={lang} availableLangs={availableLangs}>
+<Layout title={guia.data.titulo} lang={lang} availableLangs={availableLangs} description={guia.data.resumen}>
   <div class="container">
     <a class="back-link" href={`/${lang}/`}>{backLabels[lang] || backLabels.es}</a>
     <article>
