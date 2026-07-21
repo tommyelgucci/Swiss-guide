@@ -35,3 +35,25 @@ que reaccionar rápido y a veces asistir a visitas colectivas
 Normalmente equivale a 2-3 meses de alquiler y se deposita en una cuenta
 bancaria bloqueada a tu nombre (no se entrega en efectivo al propietario).
 Se libera al final del contrato si no hay daños pendientes de pagar.
+
+## Seguros recomendados (no son la LAMal)
+
+Además del seguro de salud obligatorio, hay tres seguros que casi todo
+inquilino en Suiza contrata — no son legalmente obligatorios, pero muchos
+propietarios los exigen en la práctica y son baratos:
+
+- **Responsabilidad civil privada (Haftpflichtversicherung)**: cubre los
+  daños que causes por accidente a terceros o a la propiedad alquilada
+  (por ejemplo, una fuga de agua que daña el piso de abajo). Cuesta
+  aproximadamente 50-100 CHF al año y muchos contratos de alquiler la
+  piden como condición.
+- **Protección jurídica (Rechtsschutzversicherung)**: cubre los gastos de
+  abogado y de juicio si tienes un conflicto — con el arrendador, en el
+  trabajo, de tráfico, etc. No es obligatoria, pero evita que un
+  desacuerdo con el propietario se vuelva impagable.
+- **Seguro del contenido del hogar (Hausratversicherung)**: cubre tus
+  pertenencias (muebles, electrónica, ropa) en caso de robo, incendio o
+  agua. Útil sobre todo si te mudas con cosas de valor.
+
+Muchas aseguradoras (Zurich, AXA, Mobiliar, Baloise) venden estos tres en
+un paquete combinado más barato que contratarlos por separado.
