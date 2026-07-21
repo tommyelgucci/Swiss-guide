@@ -32,3 +32,10 @@ Cada cantão define suas próprias taxas e faixas, então o mesmo salário
 pode gerar uma retenção diferente dependendo de onde você mora, não
 apenas de onde trabalha. Isso costuma gerar surpresas ao mudar de
 cantão de residência sem mudar de emprego.
+
+## Calcule seu caso
+
+Use a [calculadora de impostos por cantão](/pt/tax-calculator) para
+comparar quanto sobraria líquido conforme seu cantão, idade e situação
+familiar, com uma estimativa de quanto você recuperaria contribuindo ao
+terceiro pilar.

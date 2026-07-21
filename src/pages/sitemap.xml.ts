@@ -11,6 +11,7 @@ export const GET: APIRoute = async () => {
   for (const lang of ALL_LANGS) {
     urls.push(`${SITE}/${lang}/`);
     urls.push(`${SITE}/${lang}/legal/`);
+    urls.push(`${SITE}/${lang}/tax-calculator/`);
   }
 
   for (const lang of TOOL_LANGS) {

@@ -64,6 +64,17 @@ const toolLabels: Record<string, { builder: string; analyzer: string; checklist:
   fr: { builder: 'Créateur de CV', analyzer: 'Analyseur de CV', checklist: "Checklist d'absence" },
 };
 const labels = toolLabels[toolsLang];
+
+// La calculadora de impuestos, a diferencia del CV/checklist, sirve a
+// quien YA vive en Suiza — sí existe en los 6 idiomas, sin fallback.
+const taxCalcLabels: Record<string, string> = {
+  es: 'Calculadora de impuestos',
+  de: 'Steuerrechner',
+  en: 'Tax calculator',
+  fr: "Calculateur d'impôts",
+  it: 'Calcolatore imposte',
+  pt: 'Calculadora de impostos',
+};
 ---
 <!doctype html>
 <html lang={lang}>
@@ -124,6 +135,7 @@ const labels = toolLabels[toolsLang];
           <a href={`/${toolsLang}/cv-builder`}>{labels.builder}</a>
           <a href={`/${toolsLang}/cv-analyzer`}>{labels.analyzer}</a>
           <a href={`/${toolsLang}/checklist-ausencias`}>{labels.checklist}</a>
+          <a href={`/${lang}/tax-calculator`}>{taxCalcLabels[lang] || taxCalcLabels.en}</a>
         </nav>
         <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>

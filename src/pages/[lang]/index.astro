@@ -66,6 +66,15 @@ const porPaisBanner: Record<string, { title: string; text: string; cta: string }
   },
 };
 
+const taxCalcBanner: Record<string, { title: string; text: string; cta: string }> = {
+  es: { title: 'Calculadora de impuestos', text: 'Si ya vives y trabajas en Suiza: compara tu sueldo neto en los 26 cantones y cuánto podrías ahorrar con el Tercer Pilar.', cta: 'Calcular mi sueldo neto →' },
+  de: { title: 'Steuerrechner', text: 'Lebst und arbeitest du schon in der Schweiz? Vergleiche deinen Nettolohn in allen 26 Kantonen und was du mit der Säule 3a sparen könntest.', cta: 'Nettolohn berechnen →' },
+  en: { title: 'Tax calculator', text: 'Already living and working in Switzerland? Compare your net salary across all 26 cantons and how much you could save with pillar 3a.', cta: 'Calculate my net salary →' },
+  fr: { title: "Calculateur d'impôts", text: 'Vous vivez et travaillez déjà en Suisse ? Comparez votre salaire net dans les 26 cantons et ce que vous pourriez économiser avec le 3e pilier.', cta: 'Calculer mon salaire net →' },
+  it: { title: 'Calcolatore imposte', text: 'Vivi e lavori già in Svizzera? Confronta il tuo stipendio netto nei 26 cantoni e quanto potresti risparmiare con il terzo pilastro.', cta: 'Calcola il mio netto →' },
+  pt: { title: 'Calculadora de impostos', text: 'Já vive e trabalha na Suíça? Compare seu salário líquido nos 26 cantões e quanto poderia economizar com o Terceiro Pilar.', cta: 'Calcular meu líquido →' },
+};
+
 const topicIcons: Record<string, string> = {
   tramites:
     '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="9.5" cy="9" r="2"/><path d="M7 14.5c.5-1.6 1.4-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14.5 8h3M14.5 11h3"/>',
@@ -98,6 +107,14 @@ const topicIcons: Record<string, string> = {
       <span class="por-pais-cta">{porPaisBanner[lang].cta}</span>
     </a>
   )}
+
+  <a class="por-pais-banner" href={`/${lang}/tax-calculator`}>
+    <div>
+      <h2>{(taxCalcBanner[lang] || taxCalcBanner.en).title}</h2>
+      <p>{(taxCalcBanner[lang] || taxCalcBanner.en).text}</p>
+    </div>
+    <span class="por-pais-cta">{(taxCalcBanner[lang] || taxCalcBanner.en).cta}</span>
+  </a>
 
   {grupos.map((grupo) => (
     <section>
