@@ -17,7 +17,7 @@ const idiomas = [
 // /es/guias/lamal -> /de/guias/lamal
 const pathSinIdioma = Astro.url.pathname.replace(`/${currentLang}/`, '/');
 ---
-<nav aria-label="Selector de idioma">
+<nav class="lang-switcher" aria-label="Selector de idioma">
   {idiomas.map((idioma) => (
     <a
       href={`/${idioma.code}${pathSinIdioma}`}

@@ -64,8 +64,9 @@ const t = {
 
   <p class="privacy-note">{t.privacyNote}</p>
 
-  <section id="result" hidden>
-    <h2>{t.scoreLabel}: <span id="result-score"></span>/100</h2>
+  <section id="result" class="card" hidden>
+    <p class="eyebrow">{t.scoreLabel}</p>
+    <p class="score-display"><span id="result-score"></span><span class="score-max">/100</span></p>
     <h3>{t.summaryLabel}</h3>
     <p id="result-summary"></p>
     <h3 id="strengths-heading" hidden>{t.strengthsLabel}</h3>
@@ -182,29 +183,45 @@ const t = {
 
 <style>
   .notice {
-    border: 1px solid;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-5);
+    background: var(--color-surface);
   }
   form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--space-4);
     max-width: 480px;
+    margin-bottom: var(--space-3);
   }
   .privacy-note {
-    font-size: 0.85rem;
-    opacity: 0.8;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    max-width: 480px;
   }
   .error {
-    color: firebrick;
+    color: var(--color-danger);
+    font-weight: 600;
   }
-  #result-issues li,
-  #result-strengths li {
-    margin-bottom: 0.75rem;
+  .score-display {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-4);
   }
-  .suggestion {
-    margin: 0.2rem 0 0;
+  .score-max {
+    font-size: var(--text-lg);
+    font-weight: 400;
+    color: var(--color-text-secondary);
+  }
+  :global(#result-issues li),
+  :global(#result-strengths li) {
+    margin-bottom: var(--space-3);
+  }
+  :global(.suggestion) {
+    margin: var(--space-1) 0 0;
     font-style: italic;
+    color: var(--color-text-secondary);
   }
 </style>

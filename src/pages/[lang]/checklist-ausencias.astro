@@ -1,0 +1,334 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const t = {
+  es: {
+    pageTitle: 'Checklist de ausencias y permiso',
+    heading: '¿Vas a salir de Suiza? Revisa qué necesitas hacer',
+    intro:
+      'Responde 3 preguntas y te decimos qué acciones conviene tomar antes de irte, tanto de cara a tu permiso de residencia como a tu empleador. Es una guía orientativa basada en reglas generales, no un trámite oficial.',
+    permitLabel: 'Tu permiso actual',
+    permitB: 'Permiso B',
+    permitC: 'Permiso C',
+    reasonLabel: 'Motivo de la ausencia',
+    reasonOptions: [
+      { value: 'vacaciones', label: 'Vacaciones / viaje personal' },
+      { value: 'trabajo-remoto', label: 'Trabajo remoto desde otro país' },
+      { value: 'estudios', label: 'Estudios en el extranjero' },
+      { value: 'cuidado-familiar', label: 'Cuidado de un familiar' },
+      { value: 'otro', label: 'Otro motivo' },
+    ],
+    durationLabel: 'Duración prevista',
+    durationOptions: [
+      { value: 'menos-3', label: 'Menos de 3 meses' },
+      { value: '3-a-6', label: 'Entre 3 y 6 meses' },
+      { value: 'mas-6', label: 'Más de 6 meses' },
+    ],
+    checkBtn: 'Ver qué necesito hacer',
+    resultHeading: 'Resultado',
+    permitRisk: 'Riesgo para tu permiso',
+    employerRisk: 'De cara a tu empleador',
+    actions: 'Qué hacer antes de irte',
+    riskLow: 'Bajo',
+    riskMedium: 'A vigilar',
+    riskHigh: 'Acción obligatoria',
+    guideLink: 'Lee la guía completa sobre mantener tu permiso →',
+    disclaimer:
+      'Esta herramienta aplica reglas generales de forma automática, no analiza tu caso concreto ni sustituye a la oficina de migración de tu cantón — cada cantón puede aplicar matices propios.',
+  },
+  en: {
+    pageTitle: 'Absence & permit checklist',
+    heading: 'Leaving Switzerland? Check what you need to do',
+    intro:
+      "Answer 3 questions and we'll tell you what to sort out before you leave, both for your residence permit and with your employer. This is a general-rules guide, not an official procedure.",
+    permitLabel: 'Your current permit',
+    permitB: 'Permit B',
+    permitC: 'Permit C',
+    reasonLabel: 'Reason for the absence',
+    reasonOptions: [
+      { value: 'vacaciones', label: 'Vacation / personal trip' },
+      { value: 'trabajo-remoto', label: 'Remote work from another country' },
+      { value: 'estudios', label: 'Studies abroad' },
+      { value: 'cuidado-familiar', label: 'Caring for a family member' },
+      { value: 'otro', label: 'Other reason' },
+    ],
+    durationLabel: 'Planned duration',
+    durationOptions: [
+      { value: 'menos-3', label: 'Less than 3 months' },
+      { value: '3-a-6', label: 'Between 3 and 6 months' },
+      { value: 'mas-6', label: 'More than 6 months' },
+    ],
+    checkBtn: 'Check what I need to do',
+    resultHeading: 'Result',
+    permitRisk: 'Risk to your permit',
+    employerRisk: 'With your employer',
+    actions: 'What to do before you leave',
+    riskLow: 'Low',
+    riskMedium: 'Worth watching',
+    riskHigh: 'Action required',
+    guideLink: 'Read the full guide on keeping your permit →',
+    disclaimer:
+      "This tool applies general rules automatically — it doesn't analyze your specific case or replace your cantonal migration office, and each canton can apply its own nuances.",
+  },
+}[lang];
+
+const guideHref = `/${lang}/guias/mantener-permiso`;
+---
+
+<Layout title={t.pageTitle} lang={lang}>
+  <div class="container">
+    <h1>{t.heading}</h1>
+    <p>{t.intro}</p>
+
+    <form id="checklist-form" class="card">
+      <fieldset>
+        <legend><span>{t.permitLabel}</span></legend>
+        <label class="radio-label">
+          <input type="radio" name="permit" value="B" checked /> {t.permitB}
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="permit" value="C" /> {t.permitC}
+        </label>
+      </fieldset>
+
+      <label>
+        {t.reasonLabel}
+        <select id="reason">
+          {t.reasonOptions.map((opt) => <option value={opt.value}>{opt.label}</option>)}
+        </select>
+      </label>
+
+      <label>
+        {t.durationLabel}
+        <select id="duration">
+          {t.durationOptions.map((opt) => <option value={opt.value}>{opt.label}</option>)}
+        </select>
+      </label>
+
+      <button type="submit">{t.checkBtn}</button>
+    </form>
+
+    <section id="result" class="card" hidden>
+      <h2>{t.resultHeading}</h2>
+
+      <p class="eyebrow">{t.permitRisk}</p>
+      <p id="permit-risk-badge" class="risk-badge"></p>
+      <p id="permit-risk-text"></p>
+
+      <p class="eyebrow">{t.employerRisk}</p>
+      <p id="employer-risk-text"></p>
+
+      <p class="eyebrow">{t.actions}</p>
+      <ul id="actions-list"></ul>
+
+      <p id="reason-note"></p>
+
+      <a href={guideHref}>{t.guideLink}</a>
+    </section>
+
+    <p class="disclaimer">{t.disclaimer}</p>
+  </div>
+</Layout>
+
+<script define:vars={{ t, lang }}>
+  const form = document.getElementById('checklist-form');
+  const resultSection = document.getElementById('result');
+
+  const RISK = { low: 'low', medium: 'medium', high: 'high' };
+
+  const riskLabel = { low: t.riskLow, medium: t.riskMedium, high: t.riskHigh };
+
+  const durationRules = {
+    es: {
+      'menos-3': {
+        risk: RISK.low,
+        permitText:
+          'Una ausencia de menos de 3 meses no pone en riesgo tu permiso. No es necesario notificar a Migración.',
+        employerText:
+          'Si cae dentro de tus vacaciones, no hay impacto. Si no, acuerda con tu empleador cómo se contabiliza (día no pagado, teletrabajo, etc.).',
+        actions: ['Confirma con RRHH cómo se registra la ausencia, si aplica.'],
+      },
+      '3-a-6': {
+        risk: RISK.medium,
+        permitText:
+          'No se extingue el permiso automáticamente (el límite legal son 6 meses seguidos), pero te acercas a la zona de riesgo, sobre todo si repites salidas largas en el mismo año.',
+        employerText:
+          'Necesitas un acuerdo formal por escrito de excedencia o ausencia no pagada — sin eso hay riesgo de que se interprete como abandono de puesto.',
+        actions: [
+          'Notifica de forma preventiva a tu oficina cantonal de migración.',
+          'Guarda constancia de tus fechas de salida y entrada.',
+          'Consigue un acuerdo por escrito con tu empleador antes de irte.',
+        ],
+      },
+      'mas-6': {
+        risk: RISK.high,
+        permitText:
+          'Riesgo alto: sin una prórroga de ausencia solicitada y aprobada ANTES de salir, tu permiso se extingue automáticamente al volver (Art. 61 LEI/AIG).',
+        employerText:
+          'Sin un acuerdo de excedencia, esta ausencia puede tratarse como abandono de puesto.',
+        actions: [
+          'Solicita la prórroga de ausencia en tu oficina cantonal de migración ANTES de la fecha de salida — es el paso obligatorio.',
+          'Consigue un acuerdo formal de excedencia con tu empleador.',
+          'Guarda toda la documentación (solicitud, respuesta, fechas) por si la necesitas al volver.',
+        ],
+      },
+    },
+    en: {
+      'menos-3': {
+        risk: RISK.low,
+        permitText:
+          "An absence under 3 months doesn't put your permit at risk. No need to notify the migration office.",
+        employerText:
+          "If it falls within your vacation days, there's no impact. If not, agree with your employer on how it's counted (unpaid day, remote work, etc.).",
+        actions: ['Confirm with HR how the absence is recorded, if relevant.'],
+      },
+      '3-a-6': {
+        risk: RISK.medium,
+        permitText:
+          "Your permit doesn't lapse automatically (the legal limit is 6 consecutive months), but you're getting into risk territory, especially if you repeat long trips within the same year.",
+        employerText:
+          'You need a formal written agreement for unpaid leave — without it, there is a risk it could be treated as job abandonment.',
+        actions: [
+          'Notify your cantonal migration office as a precaution.',
+          'Keep a record of your departure and return dates.',
+          'Get a written agreement with your employer before leaving.',
+        ],
+      },
+      'mas-6': {
+        risk: RISK.high,
+        permitText:
+          'High risk: without an absence extension requested and approved BEFORE you leave, your permit is automatically extinguished when you return (Art. 61 FNIA/AIG).',
+        employerText:
+          'Without a leave-of-absence agreement, this could be treated as job abandonment.',
+        actions: [
+          'Request an absence extension from your cantonal migration office BEFORE your departure date — this is the mandatory step.',
+          'Get a formal leave-of-absence agreement with your employer.',
+          'Keep all documentation (request, response, dates) in case you need it when you return.',
+        ],
+      },
+    },
+  }[lang];
+
+  const reasonNotes = {
+    es: {
+      estudios:
+        'Nota: algunos cantones ofrecen prórrogas más largas específicamente para estudios en el extranjero — pregunta por esa modalidad al solicitar.',
+      'cuidado-familiar':
+        'Nota: si es una emergencia familiar imprevista, explícalo a Migración — algunos cantones son flexibles con causas de fuerza mayor, pero igual necesitas la solicitud formal.',
+      'trabajo-remoto':
+        'Nota: trabajar para tu empleador suizo desde otro país durante mucho tiempo puede tener implicaciones fiscales y de seguridad social además de las del permiso — consúltalo también con RRHH.',
+    },
+    en: {
+      estudios:
+        'Note: some cantons offer longer extensions specifically for studies abroad — ask about this option when applying.',
+      'cuidado-familiar':
+        'Note: if it is an unforeseen family emergency, explain it to the migration office — some cantons are flexible about force majeure reasons, but you still need the formal request.',
+      'trabajo-remoto':
+        'Note: working remotely for your Swiss employer from another country for a long time can have tax and social security implications beyond the permit ones — check with HR too.',
+    },
+  }[lang];
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const duration = document.getElementById('duration').value;
+    const reason = document.getElementById('reason').value;
+
+    const rule = durationRules[duration];
+
+    const badge = document.getElementById('permit-risk-badge');
+    badge.textContent = riskLabel[rule.risk];
+    badge.className = `risk-badge risk-${rule.risk}`;
+
+    document.getElementById('permit-risk-text').textContent = rule.permitText;
+    document.getElementById('employer-risk-text').textContent = rule.employerText;
+
+    const actionsList = document.getElementById('actions-list');
+    actionsList.innerHTML = '';
+    rule.actions.forEach((action) => {
+      const li = document.createElement('li');
+      li.textContent = action;
+      actionsList.appendChild(li);
+    });
+
+    const noteEl = document.getElementById('reason-note');
+    const note = reasonNotes[reason];
+    noteEl.textContent = note || '';
+    noteEl.hidden = !note;
+
+    resultSection.hidden = false;
+    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>
+
+<style>
+  fieldset {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+  .radio-label input {
+    width: auto;
+    min-height: auto;
+  }
+  #checklist-form label:not(.radio-label) {
+    display: block;
+    margin-bottom: var(--space-4);
+  }
+  #checklist-form select {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-2);
+  }
+  #result {
+    margin-top: var(--space-6);
+  }
+  .risk-badge {
+    display: inline-block;
+    font-weight: 700;
+    padding: var(--space-1) var(--space-3);
+    border-radius: 999px;
+    margin-bottom: var(--space-3);
+  }
+  .risk-low {
+    background: #e3f5e9;
+    color: var(--color-success);
+  }
+  .risk-medium {
+    background: #fff2d9;
+    color: #8a5a00;
+  }
+  .risk-high {
+    background: var(--color-accent-soft);
+    color: var(--color-danger);
+  }
+  #actions-list li {
+    margin-bottom: var(--space-2);
+  }
+  #reason-note {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-style: italic;
+  }
+  #reason-note:empty {
+    display: none;
+  }
+  .disclaimer {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin-top: var(--space-5);
+  }
+</style>

@@ -1,11 +1,22 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
   lang: string;
 }
 const { title, lang } = Astro.props;
+
+const toolsLang = lang === 'en' ? 'en' : 'es';
+const footerText: Record<string, string> = {
+  es: 'FirstStepinCH — guías para extranjeros en Suiza.',
+  de: 'FirstStepinCH — Leitfäden für Ausländer in der Schweiz.',
+  en: 'FirstStepinCH — guides for foreigners in Switzerland.',
+  fr: 'FirstStepinCH — guides pour les étrangers en Suisse.',
+  it: 'FirstStepinCH — guide per stranieri in Svizzera.',
+  pt: 'FirstStepinCH — guias para estrangeiros na Suíça.',
+};
 ---
 <!doctype html>
 <html lang={lang}>
@@ -13,21 +24,44 @@ const { title, lang } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <LanguageSwitcher currentLang={lang} />
-      <nav aria-label="Herramientas">
-        <a href={`/${lang === 'en' ? 'en' : 'es'}/cv-builder`}>
-          {lang === 'en' ? 'Swiss CV builder' : 'Creador de CV suizo'}
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="site-brand" href={`/${lang}/`}>
+          <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+            <rect width="30" height="30" rx="8" fill="var(--color-accent)" />
+            <path d="M8 20L13 20L13 15L18 15L18 10L22 10" stroke="var(--color-accent-contrast)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>FirstStepinCH</span>
         </a>
-        <a href={`/${lang === 'en' ? 'en' : 'es'}/cv-analyzer`}>
-          {lang === 'en' ? 'CV analyzer (ATS)' : 'Analizador de CV (ATS)'}
-        </a>
-      </nav>
+        <nav class="tools-nav" aria-label="Herramientas">
+          <a href={`/${toolsLang}/cv-builder`}>
+            {lang === 'en' ? 'CV builder' : 'Creador de CV'}
+          </a>
+          <a href={`/${toolsLang}/cv-analyzer`}>
+            {lang === 'en' ? 'CV analyzer' : 'Analizador de CV'}
+          </a>
+          <a href={`/${toolsLang}/checklist-ausencias`}>
+            {lang === 'en' ? 'Absence checklist' : 'Checklist de ausencias'}
+          </a>
+        </nav>
+        <LanguageSwitcher currentLang={lang} />
+      </div>
     </header>
-    <main>
+    <main class="container-wide">
       <slot />
     </main>
+    <footer class="site-footer">
+      <div class="container-wide">
+        <p>{footerText[lang] || footerText.es}</p>
+      </div>
+    </footer>
   </body>
 </html>
