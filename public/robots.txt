@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://firststeps-in-ch.containers.snapdeploy.app/sitemap.xml

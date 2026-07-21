@@ -19,6 +19,12 @@ app.use('/api/cv-analyzer', cvAnalyzerRoutes);
 
 app.use(express.static(distDir));
 
+// Astro genera dist/404.html en el build; express.static no lo sirve solo
+// para rutas sin match, así que lo hacemos explícito aquí con status 404.
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(distDir, '404.html'));
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal server error' });

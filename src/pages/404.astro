@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+
+const homeLinks = [
+  { code: 'es', label: 'Volver al inicio', sub: 'Página no encontrada' },
+  { code: 'de', label: 'Zur Startseite', sub: 'Seite nicht gefunden' },
+  { code: 'en', label: 'Back to home', sub: 'Page not found' },
+  { code: 'fr', label: "Retour à l'accueil", sub: 'Page introuvable' },
+  { code: 'it', label: 'Torna alla home', sub: 'Pagina non trovata' },
+  { code: 'pt', label: 'Voltar ao início', sub: 'Página não encontrada' },
+];
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 — FirstStepsinCH</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <span class="site-brand">
+          <svg class="brand-mark" width="36" height="36" viewBox="0 0 60 60" aria-hidden="true">
+            <rect width="60" height="60" rx="14" fill="var(--color-accent)" />
+            <g transform="translate(11.25,10.08)">
+              <svg width="37.5" height="37.5" viewBox="0 0 60 60" fill="none">
+                <path d="M8 38 L8 22 Q8 20 9.5 18.5 L28 3 Q30 1.5 32 3 L50.5 18.5 Q52 20 52 22 L52 38" stroke="var(--color-accent-contrast)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <line x1="8" y1="38" x2="52" y2="38" stroke="var(--color-accent-contrast)" stroke-width="5" stroke-linecap="round" />
+                <rect x="25" y="26" width="10" height="12" fill="var(--color-accent-contrast)" />
+                <rect x="28" y="29" width="4" height="1.6" fill="var(--color-accent)" />
+                <rect x="29.2" y="27.8" width="1.6" height="4.4" fill="var(--color-accent)" />
+                <ellipse cx="14" cy="48" rx="3.5" ry="2.3" fill="var(--color-accent-contrast)" transform="rotate(-20 14 48)" />
+                <ellipse cx="20" cy="43" rx="3.5" ry="2.3" fill="var(--color-accent-contrast)" transform="rotate(-20 20 43)" />
+              </svg>
+            </g>
+          </svg>
+          <span>FirstStepsinCH</span>
+        </span>
+      </div>
+    </header>
+    <main class="container-wide">
+      <div class="notfound">
+        <p class="notfound-code">404</p>
+        <div class="notfound-grid">
+          {homeLinks.map((l) => (
+            <a class="card card-link" href={`/${l.code}/`}>
+              <h3>{l.label}</h3>
+              <p>{l.sub}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </main>
+    <style>
+      .notfound {
+        padding: var(--space-7) 0;
+        text-align: center;
+      }
+      .notfound-code {
+        font-size: 5rem;
+        font-weight: 800;
+        color: var(--color-accent);
+        margin: 0 0 var(--space-6);
+        line-height: 1;
+      }
+      .notfound-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        max-width: 46rem;
+        margin: 0 auto;
+        text-align: left;
+      }
+      .notfound-grid p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+      }
+    </style>
+  </body>
+</html>
