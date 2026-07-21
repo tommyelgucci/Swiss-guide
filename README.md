@@ -1,4 +1,4 @@
-# SwissGuide (nombre provisional)
+# FirstStepinCH
 
 Prototipo base en Astro para una guía multilingüe (ES/DE/EN/FR/IT/PT) sobre
 vivir y trabajar en Suiza, dirigida a cualquier extranjero, con contenido

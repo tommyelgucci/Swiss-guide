@@ -150,13 +150,13 @@ const t = {
       </div>
 
       <fieldset>
-        <legend>{t.photo}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="14" r="3.5"/></svg><span>{t.photo}</span></legend>
         <input type="file" id="photo-input" accept="image/*" />
         <button type="button" id="remove-photo" class="secondary">{t.photoRemove}</button>
       </fieldset>
 
       <fieldset>
-        <legend>{t.personalData}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2.25"/><path d="M5.5 17c.7-2 2.2-3 3.5-3s2.8 1 3.5 3"/><path d="M14.5 9h4M14.5 12.5h4"/></svg><span>{t.personalData}</span></legend>
         <label>{t.fullName}<input type="text" id="fullName" /></label>
         <label>{t.address}<input type="text" id="address" /></label>
         <label>{t.postalCityLabel}<input type="text" id="postalCity" /></label>
@@ -174,35 +174,35 @@ const t = {
       </fieldset>
 
       <fieldset>
-        <legend>{t.profile}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 12.5h5M9.5 15.5h5M9.5 18.5h3"/></svg><span>{t.profile}</span></legend>
         <textarea id="profile" rows="4" placeholder={t.profilePlaceholder}></textarea>
       </fieldset>
 
       <fieldset>
-        <legend>{t.experience}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/><path d="M3 12.5h18"/></svg><span>{t.experience}</span></legend>
         <div id="experience-list"></div>
         <button type="button" id="add-experience" class="secondary">{t.addExperience}</button>
       </fieldset>
 
       <fieldset>
-        <legend>{t.education}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5L12 4l10 4.5L12 13z"/><path d="M6 10.7V16c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5.3"/><path d="M20 9.5v6"/></svg><span>{t.education}</span></legend>
         <div id="education-list"></div>
         <button type="button" id="add-education" class="secondary">{t.addEducation}</button>
       </fieldset>
 
       <fieldset>
-        <legend>{t.languages}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.4 3.6 5.7 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.7-3.6-9S9.6 5.4 12 3z"/></svg><span>{t.languages}</span></legend>
         <div id="languages-list"></div>
         <button type="button" id="add-language" class="secondary">{t.addLanguage}</button>
       </fieldset>
 
       <fieldset>
-        <legend>{t.skills}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2-5.4 3.2 1.3-6-4.6-4.1 6.1-.6z"/></svg><span>{t.skills}</span></legend>
         <textarea id="skills" rows="2" placeholder={t.skillsPlaceholder}></textarea>
       </fieldset>
 
       <fieldset>
-        <legend>{t.referencesLabel}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3"/><path d="M3.5 19c.7-3 3-4.5 5.5-4.5s4.8 1.5 5.5 4.5"/><circle cx="17.5" cy="8.5" r="2.5"/><path d="M15.7 14.3c2 .4 3.4 1.8 3.9 4.2"/></svg><span>{t.referencesLabel}</span></legend>
         <label class="checkbox-label">
           <input type="checkbox" id="referencesAvailable" />
           {t.referencesAvailable}
@@ -210,7 +210,7 @@ const t = {
       </fieldset>
 
       <fieldset>
-        <legend>{t.signaturePlace} / {t.signatureDate}</legend>
+        <legend><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4.5-1.2L18.8 8.5a1.8 1.8 0 0 0 0-2.5l-.8-.8a1.8 1.8 0 0 0-2.5 0L5.2 15.5z"/><path d="M13.5 6.5l4 4"/><path d="M3 21h6"/></svg><span>{t.signaturePlace} / {t.signatureDate}</span></legend>
         <label>{t.signaturePlace}<input type="text" id="sigPlace" /></label>
         <label>{t.signatureDate}<input type="text" id="sigDate" /></label>
       </fieldset>
@@ -673,18 +673,25 @@ const t = {
   }
 
   fieldset {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
   }
   legend {
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
     padding: 0 var(--space-2);
-    color: var(--color-text-secondary);
-    font-size: var(--text-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    margin-bottom: var(--space-2);
+    font-weight: 700;
+    font-size: var(--text-base);
+    color: var(--color-text);
+  }
+  legend :global(svg) {
+    color: var(--color-accent);
+    flex-shrink: 0;
   }
   fieldset label {
     display: block;
