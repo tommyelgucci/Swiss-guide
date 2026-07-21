@@ -1,5 +1,7 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import SiteSearch from '../components/SiteSearch.astro';
+import ChatWidget from '../components/ChatWidget.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -137,12 +139,14 @@ const taxCalcLabels: Record<string, string> = {
           <a href={`/${toolsLang}/checklist-ausencias`}>{labels.checklist}</a>
           <a href={`/${lang}/tax-calculator`}>{taxCalcLabels[lang] || taxCalcLabels.en}</a>
         </nav>
+        <SiteSearch lang={lang} />
         <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
       </div>
     </header>
     <main class="container-wide">
       <slot />
     </main>
+    <ChatWidget lang={lang} />
     <footer class="site-footer">
       <div class="container-wide">
         <p>{footerText[lang] || footerText.es}</p>

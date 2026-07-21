@@ -1,0 +1,345 @@
+---
+interface Props {
+  lang: string;
+}
+const { lang } = Astro.props;
+
+const t: Record<string, {
+  bubbleLabel: string;
+  title: string;
+  greeting: string;
+  inputPlaceholder: string;
+  send: string;
+  matchesIntro: string;
+  noMatch: string;
+  talkToRep: string;
+  formIntro: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  questionLabel: string;
+  submit: string;
+  successWithEmail: string;
+  successNoEmail: string;
+  close: string;
+  back: string;
+}> = {
+  es: {
+    bubbleLabel: 'Ayuda', title: 'Asistente', greeting: '¡Hola! Escribe tu duda y te muestro las guías o herramientas que podrían ayudarte.',
+    inputPlaceholder: 'Escribe tu pregunta…', send: 'Enviar',
+    matchesIntro: 'Esto podría ayudarte:', noMatch: 'No encontré nada que coincida con tu pregunta.',
+    talkToRep: 'No era esto, quiero dejar mi pregunta', formIntro: 'Deja tu pregunta y, si quieres, tu email para que te responda cuando pueda — puede tardar un poco.',
+    emailLabel: 'Tu email (opcional)', emailPlaceholder: 'tu@email.com', questionLabel: 'Tu pregunta',
+    submit: 'Enviar pregunta', successWithEmail: 'Gracias, recibí tu pregunta y te responderé a tu email en cuanto pueda.',
+    successNoEmail: 'Gracias, recibí tu pregunta. Como no dejaste email, no podré responderte directamente — vuelve a escribirla si necesitas seguimiento.',
+    close: 'Cerrar', back: '← Volver',
+  },
+  de: {
+    bubbleLabel: 'Hilfe', title: 'Assistent', greeting: 'Hallo! Schreib deine Frage und ich zeige dir passende Leitfäden oder Tools.',
+    inputPlaceholder: 'Schreib deine Frage…', send: 'Senden',
+    matchesIntro: 'Das könnte dir helfen:', noMatch: 'Ich habe nichts Passendes zu deiner Frage gefunden.',
+    talkToRep: 'War es nicht das, ich möchte meine Frage hinterlassen', formIntro: 'Hinterlasse deine Frage und, wenn du willst, deine E-Mail, damit ich antworten kann, sobald ich Zeit habe — das kann etwas dauern.',
+    emailLabel: 'Deine E-Mail (optional)', emailPlaceholder: 'du@email.com', questionLabel: 'Deine Frage',
+    submit: 'Frage senden', successWithEmail: 'Danke, ich habe deine Frage erhalten und antworte dir per E-Mail, sobald ich kann.',
+    successNoEmail: 'Danke, ich habe deine Frage erhalten. Da du keine E-Mail hinterlassen hast, kann ich dir nicht direkt antworten — schreib nochmal, falls du eine Antwort brauchst.',
+    close: 'Schliessen', back: '← Zurück',
+  },
+  en: {
+    bubbleLabel: 'Help', title: 'Assistant', greeting: "Hi! Type your question and I'll show you guides or tools that might help.",
+    inputPlaceholder: 'Type your question…', send: 'Send',
+    matchesIntro: 'This might help:', noMatch: "I couldn't find anything matching your question.",
+    talkToRep: "That's not it, I'd like to leave my question", formIntro: "Leave your question and, if you want, your email so I can reply once I get to it — it might take a bit.",
+    emailLabel: 'Your email (optional)', emailPlaceholder: 'you@email.com', questionLabel: 'Your question',
+    submit: 'Send question', successWithEmail: "Thanks, I've got your question and will reply to your email when I can.",
+    successNoEmail: "Thanks, I've got your question. Since you didn't leave an email, I can't reply directly — write again if you need a follow-up.",
+    close: 'Close', back: '← Back',
+  },
+  fr: {
+    bubbleLabel: 'Aide', title: 'Assistant', greeting: "Bonjour ! Écrivez votre question et je vous montre les guides ou outils qui pourraient vous aider.",
+    inputPlaceholder: 'Écrivez votre question…', send: 'Envoyer',
+    matchesIntro: 'Cela pourrait vous aider :', noMatch: "Je n'ai rien trouvé qui corresponde à votre question.",
+    talkToRep: "Ce n'est pas ça, je veux laisser ma question", formIntro: "Laissez votre question et, si vous le souhaitez, votre email pour que je vous réponde dès que possible — cela peut prendre un peu de temps.",
+    emailLabel: 'Votre email (facultatif)', emailPlaceholder: 'vous@email.com', questionLabel: 'Votre question',
+    submit: 'Envoyer la question', successWithEmail: "Merci, j'ai bien reçu votre question et je vous répondrai par email dès que possible.",
+    successNoEmail: "Merci, j'ai bien reçu votre question. Comme vous n'avez pas laissé d'email, je ne peux pas vous répondre directement — réécrivez si vous avez besoin d'une réponse.",
+    close: 'Fermer', back: '← Retour',
+  },
+  it: {
+    bubbleLabel: 'Aiuto', title: 'Assistente', greeting: 'Ciao! Scrivi la tua domanda e ti mostro le guide o gli strumenti che potrebbero aiutarti.',
+    inputPlaceholder: 'Scrivi la tua domanda…', send: 'Invia',
+    matchesIntro: 'Questo potrebbe aiutarti:', noMatch: 'Non ho trovato nulla che corrisponda alla tua domanda.',
+    talkToRep: 'Non era questo, voglio lasciare la mia domanda', formIntro: 'Lascia la tua domanda e, se vuoi, la tua email per risponderti appena posso — potrebbe volerci un po\'.',
+    emailLabel: 'La tua email (facoltativa)', emailPlaceholder: 'tu@email.com', questionLabel: 'La tua domanda',
+    submit: 'Invia domanda', successWithEmail: 'Grazie, ho ricevuto la tua domanda e ti risponderò via email appena possibile.',
+    successNoEmail: 'Grazie, ho ricevuto la tua domanda. Poiché non hai lasciato un\'email, non posso risponderti direttamente — riscrivi se hai bisogno di un seguito.',
+    close: 'Chiudi', back: '← Indietro',
+  },
+  pt: {
+    bubbleLabel: 'Ajuda', title: 'Assistente', greeting: 'Olá! Escreva sua dúvida e mostro os guias ou ferramentas que podem ajudar.',
+    inputPlaceholder: 'Escreva sua pergunta…', send: 'Enviar',
+    matchesIntro: 'Isso pode ajudar:', noMatch: 'Não encontrei nada relacionado à sua pergunta.',
+    talkToRep: 'Não era isso, quero deixar minha pergunta', formIntro: 'Deixe sua pergunta e, se quiser, seu email para eu responder assim que possível — pode demorar um pouco.',
+    emailLabel: 'Seu email (opcional)', emailPlaceholder: 'voce@email.com', questionLabel: 'Sua pergunta',
+    submit: 'Enviar pergunta', successWithEmail: 'Obrigado, recebi sua pergunta e vou responder ao seu email assim que possível.',
+    successNoEmail: 'Obrigado, recebi sua pergunta. Como você não deixou email, não poderei responder diretamente — escreva novamente se precisar de retorno.',
+    close: 'Fechar', back: '← Voltar',
+  },
+};
+const labels = t[lang] || t.en;
+---
+<button id="chat-bubble" class="chat-bubble" aria-label={labels.bubbleLabel} title={labels.bubbleLabel}>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div id="chat-panel" class="chat-panel" hidden>
+  <div class="chat-header">
+    <span>{labels.title}</span>
+    <button id="chat-close" aria-label={labels.close}>✕</button>
+  </div>
+  <div id="chat-body" class="chat-body">
+    <div class="chat-msg bot">{labels.greeting}</div>
+  </div>
+  <form id="chat-form" class="chat-input-row">
+    <input id="chat-input" type="text" placeholder={labels.inputPlaceholder} autocomplete="off" />
+    <button type="submit">{labels.send}</button>
+  </form>
+</div>
+
+<script type="application/json" id="chat-i18n" set:html={JSON.stringify({ lang, labels })} />
+
+<script>
+  import { searchEntries } from '../lib/searchIndex.js';
+
+  const { lang, labels } = JSON.parse(document.getElementById('chat-i18n').textContent);
+  const bubble = document.getElementById('chat-bubble');
+  const panel = document.getElementById('chat-panel');
+  const closeBtn = document.getElementById('chat-close');
+  const body = document.getElementById('chat-body');
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+
+  let index = null;
+  let lastQuestion = '';
+
+  async function loadIndex() {
+    if (index) return index;
+    const res = await fetch('/search-index.json');
+    index = await res.json();
+    return index;
+  }
+
+  function addMsg(html, who) {
+    const div = document.createElement('div');
+    div.className = `chat-msg ${who}`;
+    div.innerHTML = html;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+
+  function showMatches(query) {
+    const matches = searchEntries(index || [], lang, query);
+    if (matches.length === 0) {
+      addMsg(labels.noMatch, 'bot');
+      showTalkToRepButton();
+      return;
+    }
+    const list = matches
+      .map((m) => `<a href="${m.url}">${m.title}</a>`)
+      .join('');
+    addMsg(`${labels.matchesIntro}<div class="chat-links">${list}</div>`, 'bot');
+    showTalkToRepButton();
+  }
+
+  function showTalkToRepButton() {
+    const div = addMsg(`<button class="chat-talk-btn" type="button">${labels.talkToRep}</button>`, 'bot');
+    div.querySelector('button').addEventListener('click', showContactForm);
+  }
+
+  function showContactForm() {
+    const div = addMsg(
+      `<p>${labels.formIntro}</p>
+       <form class="contact-form">
+         <label>${labels.questionLabel}<textarea name="question" required maxlength="2000">${lastQuestion.replace(/</g, '&lt;')}</textarea></label>
+         <label>${labels.emailLabel}<input type="email" name="email" placeholder="${labels.emailPlaceholder}" /></label>
+         <button type="submit">${labels.submit}</button>
+       </form>`,
+      'bot'
+    );
+    const contactForm = div.querySelector('.contact-form');
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = contactForm.question.value.trim();
+      const email = contactForm.email.value.trim();
+      if (!question) return;
+      contactForm.querySelector('button').disabled = true;
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, email, lang, page: location.pathname }),
+        });
+        div.remove();
+        addMsg(email ? labels.successWithEmail : labels.successNoEmail, 'bot');
+      } catch {
+        contactForm.querySelector('button').disabled = false;
+      }
+    });
+  }
+
+  bubble.addEventListener('click', async () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) {
+      await loadIndex();
+      input.focus();
+    }
+  });
+  closeBtn.addEventListener('click', () => {
+    panel.hidden = true;
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+    lastQuestion = value;
+    addMsg(value, 'user');
+    input.value = '';
+    await loadIndex();
+    showMatches(value);
+  });
+</script>
+
+<style>
+  .chat-bubble {
+    position: fixed;
+    bottom: var(--space-5);
+    right: var(--space-5);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    z-index: 90;
+  }
+  .chat-panel {
+    position: fixed;
+    bottom: calc(var(--space-5) + 68px);
+    right: var(--space-5);
+    width: min(360px, calc(100vw - 2rem));
+    height: min(480px, calc(100vh - 140px));
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 95;
+  }
+  .chat-panel[hidden] {
+    display: none;
+  }
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-weight: 700;
+  }
+  .chat-header button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: var(--text-base);
+  }
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .chat-msg {
+    max-width: 90%;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+  }
+  .chat-msg.bot {
+    background: var(--color-bg);
+    align-self: flex-start;
+  }
+  .chat-msg.user {
+    background: var(--color-accent-soft);
+    align-self: flex-end;
+  }
+  .chat-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+  .chat-links a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .chat-links a:hover {
+    text-decoration: underline;
+  }
+  .chat-talk-btn {
+    background: none;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+    font-size: var(--text-sm);
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+  .contact-form label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+  .contact-form textarea,
+  .contact-form input {
+    font-size: var(--text-sm);
+    min-height: auto;
+  }
+  .contact-form textarea {
+    min-height: 60px;
+    resize: vertical;
+  }
+  .contact-form button {
+    align-self: flex-start;
+  }
+  .chat-input-row {
+    display: flex;
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-2);
+    gap: var(--space-2);
+  }
+  .chat-input-row input {
+    flex: 1;
+    min-height: auto;
+    font-size: var(--text-sm);
+  }
+</style>
