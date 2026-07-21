@@ -20,6 +20,10 @@ meses no te protege: Migración también puede fijarse en tu centro de vida
 (Lebensmittelpunkt) — si pasas la mayor parte del año fuera aunque nunca
 llegues a los 6 meses seguidos, pueden cuestionar la renovación igualmente.
 
+¿Tienes un viaje largo planeado? Usa el
+[checklist de ausencias](/es/checklist-ausencias) para ver en 3 preguntas
+qué necesitas hacer según tu permiso, motivo y duración.
+
 ## Mito vs. realidad
 
 - **Mito**: "Si vuelvo un fin de semana antes de los 6 meses, el contador

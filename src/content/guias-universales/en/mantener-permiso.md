@@ -22,6 +22,10 @@ can also look at where your actual centre of life
 abroad even without ever reaching 6 consecutive months, renewal can still
 be questioned.
 
+Got a long trip planned? Use the
+[absence checklist](/en/checklist-ausencias) to check in 3 questions what
+you need to do based on your permit, reason, and duration.
+
 ## Myth vs. reality
 
 - **Myth**: "If I come back for a weekend before hitting 6 months, the
