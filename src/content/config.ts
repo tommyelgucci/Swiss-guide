@@ -15,8 +15,8 @@ const guiasUniversales = defineCollection({
   }),
 });
 
-// Guías específicas por nacionalidad. Cada carpeta (es-ES, de-DE, en-third, etc.)
-// representa un país o grupo migratorio, no un idioma de interfaz.
+// Guías específicas por nacionalidad. Igual que guias-universales, la carpeta
+// es el idioma de interfaz (es/, en/...) y el slug identifica la guía.
 const porPais = defineCollection({
   type: 'content',
   schema: z.object({
@@ -28,6 +28,7 @@ const porPais = defineCollection({
     paisesCubiertos: z.array(z.string()),
     minutosLectura: z.number(),
     fechaActualizacion: z.date(),
+    fuentesOficiales: z.array(z.string().url()).optional(),
   }),
 });
 

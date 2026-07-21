@@ -25,6 +25,15 @@ export const GET: APIRoute = async () => {
     urls.push(`${SITE}/${lang}/guias/${slug}/`);
   }
 
+  const countryGuides = await getCollection('por-pais');
+  for (const lang of ['es', 'en']) {
+    urls.push(`${SITE}/${lang}/por-pais/`);
+  }
+  for (const guide of countryGuides) {
+    const [lang, slug] = guide.slug.split('/');
+    urls.push(`${SITE}/${lang}/por-pais/${slug}/`);
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n')}

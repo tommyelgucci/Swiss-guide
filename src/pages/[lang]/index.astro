@@ -51,6 +51,21 @@ const grupos = topicOrder
   }))
   .filter((grupo) => grupo.guias.length > 0);
 
+// Guías por país solo existen en es/en por ahora.
+const porPaisLangs = ['es', 'en'];
+const porPaisBanner: Record<string, { title: string; text: string; cta: string }> = {
+  es: {
+    title: 'Guías por país de origen',
+    text: '¿Eres español, o vienes de Latinoamérica sin pasaporte europeo? Hay guías específicas para tu situación.',
+    cta: 'Ver guías por país →',
+  },
+  en: {
+    title: 'Guides by country of origin',
+    text: 'Are you Spanish, or coming from Latin America without a European passport? There are guides specific to your situation.',
+    cta: 'See guides by country →',
+  },
+};
+
 const topicIcons: Record<string, string> = {
   tramites:
     '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="9.5" cy="9" r="2"/><path d="M7 14.5c.5-1.6 1.4-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14.5 8h3M14.5 11h3"/>',
@@ -73,6 +88,16 @@ const topicIcons: Record<string, string> = {
     <h1>{titulos[lang]}</h1>
     <p>{intros[lang] || intros.es}</p>
   </div>
+
+  {porPaisLangs.includes(lang) && (
+    <a class="por-pais-banner" href={`/${lang}/por-pais`}>
+      <div>
+        <h2>{porPaisBanner[lang].title}</h2>
+        <p>{porPaisBanner[lang].text}</p>
+      </div>
+      <span class="por-pais-cta">{porPaisBanner[lang].cta}</span>
+    </a>
+  )}
 
   {grupos.map((grupo) => (
     <section>
@@ -108,5 +133,32 @@ const topicIcons: Record<string, string> = {
   }
   .guide-grid .meta-row {
     margin: 0;
+  }
+  .por-pais-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    background: var(--color-accent-soft);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    text-decoration: none;
+    color: inherit;
+  }
+  .por-pais-banner h2 {
+    margin: 0 0 var(--space-1);
+  }
+  .por-pais-banner p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+  .por-pais-cta {
+    color: var(--color-accent);
+    font-weight: 600;
+    white-space: nowrap;
   }
 </style>

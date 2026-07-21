@@ -1,0 +1,73 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  // Por ahora el contenido por país solo existe en ES/EN — la mayoría de
+  // lectores de estas guías (españoles, latinoamericanos) usan uno de los
+  // dos idiomas del sitio.
+  return [{ params: { lang: 'es' } }, { params: { lang: 'en' } }];
+}
+
+const { lang } = Astro.params as 'es' | 'en';
+
+const todasLasGuias = await getCollection('por-pais');
+const guiasDelIdioma = todasLasGuias.filter((g) => g.slug.startsWith(`${lang}/`));
+
+const t = {
+  es: {
+    pageTitle: 'Guías por país de origen',
+    heading: 'Guías por país de origen',
+    intro:
+      'Las guías universales de este sitio aplican a cualquier nacionalidad. Estas guías, en cambio, están escritas para situaciones específicas según tu nacionalidad o estatus migratorio.',
+    backHome: '← Volver al inicio',
+  },
+  en: {
+    pageTitle: 'Guides by country of origin',
+    heading: 'Guides by country of origin',
+    intro:
+      "This site's universal guides apply to any nationality. These guides, instead, are written for situations specific to your nationality or migration status.",
+    backHome: '← Back to home',
+  },
+}[lang];
+
+const categoryLabels: Record<string, Record<string, string>> = {
+  'ue-efta': { es: 'Ciudadanía UE/EFTA', en: 'EU/EFTA citizenship' },
+  'tercer-pais': { es: 'Tercer país', en: 'Third country' },
+};
+---
+<Layout title={t.pageTitle} lang={lang} availableLangs={['es', 'en']} description={t.intro}>
+  <div class="container">
+    <a class="back-link" href={`/${lang}/`}>{t.backHome}</a>
+    <h1>{t.heading}</h1>
+    <p>{t.intro}</p>
+
+    <div class="guide-grid">
+      {guiasDelIdioma.map((guia) => (
+        <a class="card card-link" href={`/${lang}/por-pais/${guia.slug.split('/')[1]}`}>
+          <p class="eyebrow">{categoryLabels[guia.data.categoriaMigratoria]?.[lang] || guia.data.categoriaMigratoria}</p>
+          <h3>{guia.data.titulo}</h3>
+          <p>{guia.data.resumen}</p>
+          <span class="meta-row">{guia.data.minutosLectura} min · {guia.data.paisesCubiertos.slice(0, 3).join(', ')}{guia.data.paisesCubiertos.length > 3 ? '…' : ''}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: var(--space-6);
+  }
+  .guide-grid p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+  .guide-grid .meta-row {
+    margin: 0;
+  }
+</style>
