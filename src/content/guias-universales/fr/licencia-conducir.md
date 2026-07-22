@@ -68,6 +68,29 @@ avant l'échéance de vos 12 mois.
    forte demande (Zurich, Genève), il peut y avoir une liste d'attente
    de plusieurs semaines.
 
+## Préparez-vous avec TheorieKI
+
+[**TheorieKI — Théorie suisse**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+est une application web gratuite (pas encore sur les stores) pour vous
+préparer, disponible dans les 6 mêmes langues que ce guide. Elle couvre
+aussi bien l'obtention du permis suisse à partir de zéro que l'échange
+d'un permis étranger :
+
+- Banque de questions et simulation de l'examen théorique de base
+  (Basistheorieprüfung), avec les panneaux de signalisation et une
+  révision des questions ratées.
+- Manœuvres de l'examen pratique animées étape par étape
+  (stationnement, priorité de droite, giratoires, freinage d'urgence,
+  etc.).
+- Un module dédié **Kontrollfahrt** — l'examen de conduite à tentative
+  unique exigé pour l'échange d'un permis de pays tiers — avec les
+  erreurs qui font échouer et une checklist.
+- Une révision Nothelfer (premiers secours) et VKU.
+
+Sans compte, sans publicité, sans suivi — voyez les détails dans son
+[avis de confidentialité](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[Ouvrir l'application →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Avis important
 
 Les accords bilatéraux et les exigences exactes évoluent dans le temps

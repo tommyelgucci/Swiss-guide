@@ -65,6 +65,28 @@ deiner 12-Monats-Frist.
    nachgefragten Kantonen (Zürich, Genf) kann es Wartelisten von
    mehreren Wochen geben.
 
+## Vorbereiten mit TheorieKI
+
+[**TheorieKI — Schweizer Theorie**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+ist eine kostenlose Web-App (noch nicht in App Stores) zur Vorbereitung,
+verfügbar in denselben 6 Sprachen wie dieser Leitfaden. Sie deckt sowohl
+den Erwerb des Schweizer Führerscheins von Grund auf als auch den
+Umtausch eines ausländischen ab:
+
+- Fragenkatalog und Simulation der Basistheorieprüfung, mit
+  Verkehrssignalen und Wiederholung falsch beantworteter Fragen.
+- Schritt-für-Schritt animierte Manöver der praktischen Prüfung
+  (Einparken, Rechtsvortritt, Kreisel, Vollbremsung usw.).
+- Ein eigenes **Kontrollfahrt**-Modul — die Fahrprüfung mit nur einem
+  Versuch, die beim Umtausch eines Drittstaaten-Führerscheins verlangt
+  wird — mit den Fehlern, die zum Nichtbestehen führen, und einer
+  Checkliste.
+- Wiederholung von Nothelfer und VKU.
+
+Keine Konten, keine Werbung, kein Tracking — Details im
+[Datenschutzhinweis](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[App öffnen →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Wichtiger Hinweis
 
 Die bilateralen Abkommen und die genauen Anforderungen ändern sich mit

@@ -64,6 +64,27 @@ que expiren tus 12 meses.
 3. Si te corresponde examen, agenda cita — en cantones con alta demanda
    (Zúrich, Ginebra) puede haber lista de espera de varias semanas.
 
+## Prepárate con TheorieKI
+
+[**TheorieKI — Teoría Suiza**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+es una app web gratuita (aún no en tiendas de aplicaciones) para
+prepararte, disponible en los mismos 6 idiomas que esta guía. Cubre
+tanto a quien saca la licencia suiza desde cero como a quien está
+canjeando una extranjera:
+
+- Banco de preguntas y simulacro del examen teórico (Basistheorieprüfung),
+  con señales de tráfico y repaso de las preguntas falladas.
+- Maniobras del examen práctico animadas paso a paso (aparcar,
+  Rechtsvortritt, rotondas, frenada de emergencia, etc.).
+- Un módulo específico de **Kontrollfahrt** — el examen de conducción de
+  un solo intento que se pide a quien canjea una licencia de tercer
+  país — con los errores que suspenden y una checklist.
+- Repaso de Nothelfer (primeros auxilios) y VKU.
+
+Sin cuentas, sin anuncios, sin rastreo — puedes ver los detalles en su
+[aviso de privacidad](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[Abrir la app →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Aviso importante
 
 Los acuerdos bilaterales y los requisitos exactos cambian con el tiempo

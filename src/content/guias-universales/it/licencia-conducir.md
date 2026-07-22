@@ -66,6 +66,28 @@ prima della scadenza dei tuoi 12 mesi.
    richiesta (Zurigo, Ginevra) può esserci una lista d'attesa di diverse
    settimane.
 
+## Preparati con TheorieKI
+
+[**TheorieKI — Teoria svizzera**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+è un'app web gratuita (non ancora sugli store) per prepararti,
+disponibile nelle stesse 6 lingue di questa guida. Copre sia chi
+prende la patente svizzera da zero sia chi converte una patente
+straniera:
+
+- Banca di domande e simulazione dell'esame teorico di base
+  (Basistheorieprüfung), con segnali stradali e ripasso delle domande
+  sbagliate.
+- Manovre dell'esame pratico animate passo dopo passo (parcheggio,
+  precedenza a destra, rotonde, frenata d'emergenza, ecc.).
+- Un modulo dedicato **Kontrollfahrt** — l'esame di guida a tentativo
+  unico richiesto per la conversione di una patente di paese terzo —
+  con gli errori che fanno bocciare e una checklist.
+- Ripasso di Nothelfer (primo soccorso) e VKU.
+
+Senza account, senza pubblicità, senza tracciamento — vedi i dettagli
+nel suo [avviso sulla privacy](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[Apri l'app →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Avviso importante
 
 Gli accordi bilaterali e i requisiti esatti cambiano nel tempo e

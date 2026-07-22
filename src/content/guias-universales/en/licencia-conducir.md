@@ -62,6 +62,27 @@ plus lessons), and planning well ahead of your 12-month deadline.
    cantons (Zurich, Geneva) there can be a waiting list of several
    weeks.
 
+## Prepare with TheorieKI
+
+[**TheorieKI — Swiss Theory**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+is a free web app (not yet on app stores) to help you prepare, available
+in the same 6 languages as this guide. It covers both getting a Swiss
+licence from scratch and exchanging a foreign one:
+
+- Question bank and mock exam for the basic theory test
+  (Basistheorieprüfung), with traffic signs and a review of missed
+  questions.
+- Step-by-step animated practical exam manoeuvres (parking,
+  right-of-way, roundabouts, emergency braking, etc.).
+- A dedicated **Kontrollfahrt** module — the one-attempt driving test
+  required when exchanging a third-country licence — with the mistakes
+  that fail you and a checklist.
+- A Nothelfer (first aid) and VKU review section.
+
+No accounts, no ads, no tracking — see the details in its
+[privacy notice](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[Open the app →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Important notice
 
 The bilateral agreements and exact requirements change over time and

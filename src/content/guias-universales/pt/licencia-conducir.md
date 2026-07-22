@@ -67,6 +67,28 @@ meses expirem.
    demanda (Zurique, Genebra) pode haver lista de espera de várias
    semanas.
 
+## Prepare-se com o TheorieKI
+
+[**TheorieKI — Teoria Suíça**](https://tommyelgucci.github.io/theorieki-teoria-suiza/landing.html)
+é um aplicativo web gratuito (ainda não nas lojas de apps) para se
+preparar, disponível nos mesmos 6 idiomas deste guia. Cobre tanto quem
+tira a carteira suíça do zero quanto quem está trocando uma
+estrangeira:
+
+- Banco de perguntas e simulado do exame teórico básico
+  (Basistheorieprüfung), com sinais de trânsito e revisão das perguntas
+  erradas.
+- Manobras do exame prático animadas passo a passo (estacionar,
+  preferencial à direita, rotatórias, frenagem de emergência, etc.).
+- Um módulo dedicado de **Kontrollfahrt** — o exame de direção de
+  tentativa única exigido para quem troca uma carteira de terceiro
+  país — com os erros que reprovam e uma checklist.
+- Revisão de Nothelfer (primeiros socorros) e VKU.
+
+Sem contas, sem anúncios, sem rastreamento — veja os detalhes no
+[aviso de privacidade](https://tommyelgucci.github.io/theorieki-teoria-suiza/privacy.html).
+[Abrir o aplicativo →](https://tommyelgucci.github.io/theorieki-teoria-suiza/)
+
 ## Aviso importante
 
 Os acordos bilaterais e os requisitos exatos mudam com o tempo e variam
