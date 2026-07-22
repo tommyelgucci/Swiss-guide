@@ -278,6 +278,62 @@ textarea:focus {
 }
 
 .site-brand {
+  order: 1;
+}
+
+/* La cabecera (marca + 4 enlaces + selector de 6 idiomas + búsqueda +
+   tema) nunca cabe en una sola fila dentro del ancho fijo del
+   contenedor (68rem), sin importar cuán ancha sea la ventana — así que
+   el menú hamburguesa queda siempre visible, en vez de perseguir un
+   punto de quiebre que nunca termina de encajar. */
+.nav-panel {
+  order: 4;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  flex-basis: 100%;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-panel.open {
+  display: flex;
+}
+
+.tools-nav,
+.lang-switcher {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.header-actions {
+  order: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0;
+}
+
+.nav-toggle-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.site-brand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -521,9 +577,5 @@ article h2:first-of-type {
     --text-3xl: 1.75rem;
     --text-2xl: 1.5rem;
   }
-
-  .site-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
+

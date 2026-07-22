@@ -56,6 +56,10 @@ const skipLabels: Record<string, string> = {
   fr: 'Passer au contenu', it: 'Vai al contenuto', pt: 'Pular para o conteúdo',
 };
 
+const menuLabels: Record<string, string> = {
+  es: 'Menú', de: 'Menü', en: 'Menu', fr: 'Menu', it: 'Menu', pt: 'Menu',
+};
+
 const legalLabels: Record<string, string> = {
   es: 'Aviso legal y privacidad',
   de: 'Impressum und Datenschutz',
@@ -151,17 +155,35 @@ const checklistLabels: Record<string, string> = {
           </svg>
           <span>FirstStepsinCH</span>
         </a>
-        <nav class="tools-nav" aria-label="Herramientas">
-          <a href={`/${toolsLang}/cv-builder`}>{labels.builder}</a>
-          <a href={`/${toolsLang}/cv-analyzer`}>{labels.analyzer}</a>
-          <a href={`/${lang}/checklist-ausencias`}>{checklistLabels[lang] || checklistLabels.en}</a>
-          <a href={`/${lang}/tax-calculator`}>{taxCalcLabels[lang] || taxCalcLabels.en}</a>
-        </nav>
-        <SiteSearch lang={lang} />
-        <ThemeToggle lang={lang} />
-        <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
+
+        <div class="header-actions">
+          <SiteSearch lang={lang} />
+          <ThemeToggle lang={lang} />
+          <button id="nav-toggle" class="nav-toggle-btn" aria-label={menuLabels[lang] || menuLabels.en} aria-expanded="false" aria-controls="nav-panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+
+        <div id="nav-panel" class="nav-panel">
+          <nav class="tools-nav" aria-label="Herramientas">
+            <a href={`/${toolsLang}/cv-builder`}>{labels.builder}</a>
+            <a href={`/${toolsLang}/cv-analyzer`}>{labels.analyzer}</a>
+            <a href={`/${lang}/checklist-ausencias`}>{checklistLabels[lang] || checklistLabels.en}</a>
+            <a href={`/${lang}/tax-calculator`}>{taxCalcLabels[lang] || taxCalcLabels.en}</a>
+          </nav>
+          <LanguageSwitcher currentLang={lang} availableLangs={availableLangs} />
+        </div>
       </div>
     </header>
+
+    <script>
+      const navToggle = document.getElementById('nav-toggle');
+      const navPanel = document.getElementById('nav-panel');
+      navToggle.addEventListener('click', () => {
+        const isOpen = navPanel.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+    </script>
     <main id="main" class="container-wide">
       <slot />
     </main>
