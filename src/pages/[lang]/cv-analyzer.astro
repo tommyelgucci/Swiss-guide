@@ -127,7 +127,8 @@ const t = {
 </Layout>
 
 <script>
-  const { t, lang } = JSON.parse(document.getElementById('cv-analyzer-i18n').textContent);
+  import { readI18n } from '../../lib/readI18n.js';
+  const { t, lang } = readI18n('cv-analyzer-i18n');
   const form = document.getElementById('analyzer-form');
   const fileInput = document.getElementById('cv-file');
   const analyzeBtn = document.getElementById('analyze-btn');

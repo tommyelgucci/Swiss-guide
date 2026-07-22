@@ -1,14 +1,14 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const todasLasGuias = await getCollection('por-pais');
   return todasLasGuias.map((guia) => {
-    const [lang, slug] = guia.slug.split('/');
+    const [lang, slug] = guia.id.split('/');
     const availableLangs = todasLasGuias
-      .filter((g) => g.slug.split('/')[1] === slug)
-      .map((g) => g.slug.split('/')[0]);
+      .filter((g) => g.id.split('/')[1] === slug)
+      .map((g) => g.id.split('/')[0]);
     return {
       params: { lang, slug },
       props: { guia, availableLangs },
@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 
 const { guia, availableLangs } = Astro.props;
 const { lang } = Astro.params;
-const { Content } = await guia.render();
+const { Content } = await render(guia);
 
 const backLabels: Record<string, string> = {
   es: '← Todas las guías por país',

@@ -20,13 +20,13 @@ export const GET: APIRoute = async () => {
 
   const guides = await getCollection('guias-universales');
   for (const g of guides) {
-    const [lang, slug] = g.slug.split('/');
+    const [lang, slug] = g.id.split('/');
     entries.push({ lang, title: g.data.titulo, text: g.data.resumen, url: `/${lang}/guias/${slug}`, kind: 'guide' });
   }
 
   const countryGuides = await getCollection('por-pais');
   for (const g of countryGuides) {
-    const [lang, slug] = g.slug.split('/');
+    const [lang, slug] = g.id.split('/');
     entries.push({ lang, title: g.data.titulo, text: g.data.resumen, url: `/${lang}/por-pais/${slug}`, kind: 'guide' });
   }
 

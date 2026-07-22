@@ -1,10 +1,12 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 // Guías universales: mismo contenido temático, una versión por idioma.
-// El "slug" debe coincidir entre idiomas (ej. lamal.md en es/, de/, en/...)
-// para poder enlazar el selector de idioma a la página equivalente.
+// El "id" (antes "slug") debe coincidir entre idiomas (ej. lamal.md en
+// es/, de/, en/...) para poder enlazar el selector de idioma a la
+// página equivalente.
 const guiasUniversales = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/guias-universales' }),
   schema: z.object({
     titulo: z.string(),
     resumen: z.string(),
@@ -16,9 +18,9 @@ const guiasUniversales = defineCollection({
 });
 
 // Guías específicas por nacionalidad. Igual que guias-universales, la carpeta
-// es el idioma de interfaz (es/, en/...) y el slug identifica la guía.
+// es el idioma de interfaz (es/, en/...) y el id identifica la guía.
 const porPais = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/por-pais' }),
   schema: z.object({
     titulo: z.string(),
     resumen: z.string(),

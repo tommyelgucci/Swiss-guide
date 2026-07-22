@@ -11,7 +11,7 @@ const { lang } = Astro.params;
 
 // Trae solo las guías universales de este idioma
 const todasLasGuias = await getCollection('guias-universales');
-const guiasDelIdioma = todasLasGuias.filter((g) => g.slug.startsWith(`${lang}/`));
+const guiasDelIdioma = todasLasGuias.filter((g) => g.id.startsWith(`${lang}/`));
 
 const titulos: Record<string, string> = {
   es: 'Guía para vivir y trabajar en Suiza',
@@ -291,7 +291,7 @@ const topicIcons: Record<string, string> = {
       </h2>
       <div class="guide-grid">
         {grupo.guias.map((guia) => (
-          <a class="card card-link" href={`/${lang}/guias/${guia.slug.split('/')[1]}`}>
+          <a class="card card-link" href={`/${lang}/guias/${guia.id.split('/')[1]}`}>
             <span class="card-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={topicIcons[grupo.tema]} />
             </span>
