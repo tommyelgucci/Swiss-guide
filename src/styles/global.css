@@ -44,7 +44,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-bg: #121214;
     --color-surface: #1c1c1f;
     --color-text: #f0f0f0;
@@ -59,6 +59,29 @@
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
   }
+}
+
+/* Anula el sistema operativo cuando la persona elige manualmente con el
+   botón del header (persistido en localStorage, ver Layout.astro). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #121214;
+  --color-surface: #1c1c1f;
+  --color-text: #f0f0f0;
+  --color-text-secondary: #a8a8ad;
+  --color-border: #333338;
+  --color-accent: #ff5c50;
+  --color-accent-soft: #2a1917;
+  --color-accent-contrast: #17181a;
+  --color-danger: #ff6b61;
+  --color-success: #4ade80;
+  --color-focus: #8ab4f8;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }
 
 *,
@@ -252,6 +275,62 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+}
+
+.site-brand {
+  order: 1;
+}
+
+/* La cabecera (marca + 4 enlaces + selector de 6 idiomas + búsqueda +
+   tema) nunca cabe en una sola fila dentro del ancho fijo del
+   contenedor (68rem), sin importar cuán ancha sea la ventana — así que
+   el menú hamburguesa queda siempre visible, en vez de perseguir un
+   punto de quiebre que nunca termina de encajar. */
+.nav-panel {
+  order: 4;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  flex-basis: 100%;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-panel.open {
+  display: flex;
+}
+
+.tools-nav,
+.lang-switcher {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.header-actions {
+  order: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0;
+}
+
+.nav-toggle-btn:hover {
+  border-color: var(--color-accent);
 }
 
 .site-brand {
@@ -498,9 +577,5 @@ article h2:first-of-type {
     --text-3xl: 1.75rem;
     --text-2xl: 1.5rem;
   }
-
-  .site-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
+

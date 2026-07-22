@@ -399,6 +399,18 @@ const cantonOptions = [...CANTONS].sort((a, b) => a.rate100k - b.rate100k);
     <p>{t.intro}</p>
     <p class="quick-answer"><strong>{t.quickAnswer}</strong></p>
 
+    <section class="permit-compare">
+      <h2>{t.howHeading}</h2>
+      <div class="guide-grid">
+        {t.howCards.slice(0, 2).map((c) => (
+          <div class="card">
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
     <form id="tax-form" class="card">
       <label>
         {t.grossLabel}
@@ -472,9 +484,8 @@ const cantonOptions = [...CANTONS].sort((a, b) => a.rate100k - b.rate100k);
     </section>
 
     <section>
-      <h2>{t.howHeading}</h2>
       <div class="guide-grid">
-        {t.howCards.map((c) => (
+        {t.howCards.slice(2).map((c) => (
           <div class="card">
             <h3>{c.title}</h3>
             <p>{c.text}</p>
