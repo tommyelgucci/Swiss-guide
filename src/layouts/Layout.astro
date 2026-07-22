@@ -178,9 +178,11 @@ const checklistLabels: Record<string, string> = {
 
     <script>
       import { wireToggle } from '../lib/toggleButton.js';
+      import { pingPageview } from '../lib/analytics.js';
 
       const navPanel = document.getElementById('nav-panel');
       wireToggle('nav-toggle', () => navPanel.classList.toggle('open'));
+      pingPageview();
     </script>
     <main id="main" class="container-wide">
       <slot />

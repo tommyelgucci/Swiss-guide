@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cvAnalyzerRoutes from './server/routes/cv-analyzer.js';
 import contactRoutes from './server/routes/contact.js';
+import analyticsRoutes from './server/routes/analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -52,6 +53,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/cv-analyzer', cvAnalyzerRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.use(express.static(distDir));
 
