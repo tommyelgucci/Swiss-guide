@@ -24,6 +24,8 @@ const label = t[lang] || t.en;
 </button>
 
 <script>
+  import { wireToggle } from '../lib/toggleButton.js';
+
   const btn = document.getElementById('theme-toggle');
   const root = document.documentElement;
   const sunIcon = btn.querySelector('.icon-sun');
@@ -43,7 +45,7 @@ const label = t[lang] || t.en;
     moonIcon.hidden = isDark;
   }
 
-  btn.addEventListener('click', () => {
+  wireToggle('theme-toggle', () => {
     const next = currentTheme() === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     try {
@@ -53,6 +55,7 @@ const label = t[lang] || t.en;
       // funcionando para esta carga de página, solo no se recuerda.
     }
     syncIcons();
+    return next === 'dark';
   });
 
   syncIcons();

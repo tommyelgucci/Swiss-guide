@@ -1,30 +1,20 @@
 import { Router } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
-import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createRateLimiter } from '../lib/rateLimit.js';
+import { adminTokenMatches } from '../lib/adminAuth.js';
 
 const router = Router();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, '..', 'data');
 const dataFile = path.join(dataDir, 'contact-submissions.jsonl');
 
-const ADMIN_TOKEN = process.env.CONTACT_ADMIN_TOKEN;
-
 const MAX_QUESTION_LENGTH = 2000;
 const MAX_EMAIL_LENGTH = 200;
 
 // Máximo 5 envíos por IP cada 10 minutos.
 const contactRateLimit = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 5 });
-
-function tokenMatches(provided) {
-  if (!ADMIN_TOKEN || typeof provided !== 'string') return false;
-  const a = Buffer.from(provided);
-  const b = Buffer.from(ADMIN_TOKEN);
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
-}
 
 router.post('/', contactRateLimit, (req, res) => {
   const { question, email, lang, page } = req.body || {};
@@ -65,7 +55,7 @@ router.post('/', contactRateLimit, (req, res) => {
 // entorno CONTACT_ADMIN_TOKEN). Sin token configurado, el endpoint está
 // deshabilitado por completo — no expone nada por accidente.
 router.get('/', (req, res) => {
-  if (!tokenMatches(req.query.token)) {
+  if (!adminTokenMatches(req.query.token)) {
     return res.status(404).end();
   }
   if (!fs.existsSync(dataFile)) {

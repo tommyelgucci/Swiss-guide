@@ -12,7 +12,7 @@ export function getStaticPaths() {
 const { lang } = Astro.params as 'es' | 'en';
 
 const todasLasGuias = await getCollection('por-pais');
-const guiasDelIdioma = todasLasGuias.filter((g) => g.slug.startsWith(`${lang}/`));
+const guiasDelIdioma = todasLasGuias.filter((g) => g.id.startsWith(`${lang}/`));
 
 const t = {
   es: {
@@ -44,7 +44,7 @@ const categoryLabels: Record<string, Record<string, string>> = {
 
     <div class="guide-grid">
       {guiasDelIdioma.map((guia) => (
-        <a class="card card-link" href={`/${lang}/por-pais/${guia.slug.split('/')[1]}`}>
+        <a class="card card-link" href={`/${lang}/por-pais/${guia.id.split('/')[1]}`}>
           <p class="eyebrow">{categoryLabels[guia.data.categoriaMigratoria]?.[lang] || guia.data.categoriaMigratoria}</p>
           <h3>{guia.data.titulo}</h3>
           <p>{guia.data.resumen}</p>

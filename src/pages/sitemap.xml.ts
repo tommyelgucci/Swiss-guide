@@ -22,7 +22,7 @@ export const GET: APIRoute = async () => {
 
   const guides = await getCollection('guias-universales');
   for (const guide of guides) {
-    const [lang, slug] = guide.slug.split('/');
+    const [lang, slug] = guide.id.split('/');
     urls.push(`${SITE}/${lang}/guias/${slug}/`);
   }
 
@@ -31,7 +31,7 @@ export const GET: APIRoute = async () => {
     urls.push(`${SITE}/${lang}/por-pais/`);
   }
   for (const guide of countryGuides) {
-    const [lang, slug] = guide.slug.split('/');
+    const [lang, slug] = guide.id.split('/');
     urls.push(`${SITE}/${lang}/por-pais/${slug}/`);
   }
 

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cvAnalyzerRoutes from './server/routes/cv-analyzer.js';
 import contactRoutes from './server/routes/contact.js';
+import analyticsRoutes from './server/routes/analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -15,18 +16,23 @@ const app = express();
 // siempre sería la IP del proxy y el rate limiting por IP no serviría.
 app.set('trust proxy', 1);
 
-// Hash del único script inline del sitio (bootstrap de tema en el <head>
-// de Layout.astro, evita el flash del tema equivocado antes de que cargue
-// el CSS). Si se edita ese script hay que recalcular este hash — el error
-// de CSP en la consola del navegador trae el hash correcto listo para copiar.
+// Hashes de los scripts inline del sitio (después de `npm run build`,
+// scripts sin imports y por debajo de cierto tamaño Astro/Vite los deja
+// inline en el HTML en vez de exportarlos como archivo externo — algo que
+// el CSP estricto bloquearía sin esto). Si se edita alguno de estos
+// scripts hay que recalcular su hash: el error de CSP en la consola del
+// navegador trae el hash correcto listo para copiar.
 const THEME_BOOTSTRAP_SCRIPT_HASH = "'sha256-8vu7JPBmFieTRgZYxooHaqDpi//mMnwgj8HOBW4m9tk='";
+// Script inline de src/pages/[lang]/cv-analyzer.astro (demasiado pequeño
+// y usado en pocas páginas para que Astro lo exporte como chunk externo).
+const CV_ANALYZER_SCRIPT_HASH = "'sha256-3dA4fDlwmoQqFA6i/jji53nCej9sTH0y070e62wG3JU='";
 
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", THEME_BOOTSTRAP_SCRIPT_HASH],
+        scriptSrc: ["'self'", THEME_BOOTSTRAP_SCRIPT_HASH, CV_ANALYZER_SCRIPT_HASH],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:'],
@@ -47,6 +53,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/cv-analyzer', cvAnalyzerRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.use(express.static(distDir));
 
